@@ -1,0 +1,35 @@
+@import url(https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css);
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+.book .book-body .page-wrapper .page-inner section.normal code {
+  font-family: 'Fira Code', monospace;
+  font-feature-settings: "liga", "calt";
+}
+@supports (font-variation-settings: normal) {
+  .book .book-body .page-wrapper .page-inner section.normal code {
+    font-family: 'Fira Code VF', monospace;
+    font-feature-settings: "liga", "calt";
+  }
+}
+.hanging-indent {
+    padding-left: 22px;
+    text-indent: -22px;
+}
+.book.color-theme-1 .book-body .page-wrapper .page-inner section.normal a {
+  color: #00a !important;
+}
+.book.color-theme-2 code span.fu {
+  color: #99f !important;
+}

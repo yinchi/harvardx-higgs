@@ -1,0 +1,6 @@
+output_dir: docs
+book_filename: "merged.Rmd"
+delete_merged_file: false
+language:
+  ui:
+    chapter_name: "Chapter "

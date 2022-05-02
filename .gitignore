@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+ml-10M100K
+_book
+_bookdown_files
+_main.Rmd
+*.tmp
+*.bak
+/*.Rdata
+*.log

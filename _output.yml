@@ -1,0 +1,23 @@
+bookdown::gitbook:
+  css: style.css
+  config:
+    toc:
+      before: |
+        <li><a href="./index.html">Gitbook Template</a></li>
+      after: |
+        <li><a href="https://github.com/yinchi/gitbook-template" target="blank">Published with bookdown</a></li>
+    edit: https://github.com/yinchi/gitbook-template/blob/main/%s
+    download: ["pdf"]
+    fontsettings:
+      theme: sepia
+      family: serif
+    sharing:
+      facebook: true
+      twitter: true
+      weibo: false
+      all: ['facebook', 'twitter', 'linkedin']
+bookdown::pdf_book:
+  includes:
+    in_header: preamble.tex
+  latex_engine: lualatex
+  pandoc_args: "--syntax-definition=r.xml"
