@@ -1,5 +1,5 @@
 output_dir: docs
-book_filename: "merged.Rmd"
+book_filename: "higgs.Rmd"
 delete_merged_file: false
 language:
   ui:

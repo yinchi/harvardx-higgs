@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 GPU-accelerated machine learning using Keras | HarvardX 125.9x Project: Higgs dataset classification</title>
+  <meta name="description" content="See also: _output.yml, _bookdown.yml" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 GPU-accelerated machine learning using Keras | HarvardX 125.9x Project: Higgs dataset classification" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="See also: _output.yml, _bookdown.yml" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 GPU-accelerated machine learning using Keras | HarvardX 125.9x Project: Higgs dataset classification" />
+  
+  <meta name="twitter:description" content="See also: _output.yml, _bookdown.yml" />
+  
+
+<meta name="author" content="Firstname Lastname" />
+
+
+<meta name="date" content="2022-05-13" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="lightgbm.html"/>
+<link rel="next" href="final-model-selection-and-validation.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">HarvardX 125.9: Higgs data analysis</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><b>0.1</b> R setup</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-higgs-dataset"><i class="fa fa-check"></i><b>1.1</b> The HIGGS dataset</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#creating-the-final-test-splits"><i class="fa fa-check"></i><b>1.2</b> Creating the final test splits</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#optimization-metric"><i class="fa fa-check"></i><b>1.3</b> Optimization metric</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="data-analysis.html"><a href="data-analysis.html"><i class="fa fa-check"></i><b>2</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-analysis.html"><a href="data-analysis.html#low-level-momentum-features"><i class="fa fa-check"></i><b>2.1</b> Low-level momentum features</a></li>
+<li class="chapter" data-level="2.2" data-path="data-analysis.html"><a href="data-analysis.html#angular-features"><i class="fa fa-check"></i><b>2.2</b> Angular features</a></li>
+<li class="chapter" data-level="2.3" data-path="data-analysis.html"><a href="data-analysis.html#b-tag-features"><i class="fa fa-check"></i><b>2.3</b> <span class="math inline">\(b\)</span>-tag features</a></li>
+<li class="chapter" data-level="2.4" data-path="data-analysis.html"><a href="data-analysis.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
+<li class="chapter" data-level="2.5" data-path="data-analysis.html"><a href="data-analysis.html#final-data-transformation"><i class="fa fa-check"></i><b>2.5</b> Final data transformation</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="lightgbm.html"><a href="lightgbm.html"><i class="fa fa-check"></i><b>3</b> <code>lightgbm</code></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="lightgbm.html"><a href="lightgbm.html#lightgbm-model-with-optimized-drop-rate"><i class="fa fa-check"></i><b>3.1</b> <code>lightgbm</code> model with optimized drop rate</a></li>
+<li class="chapter" data-level="3.2" data-path="lightgbm.html"><a href="lightgbm.html#feature-importance"><i class="fa fa-check"></i><b>3.2</b> Feature importance</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html"><i class="fa fa-check"></i><b>4</b> GPU-accelerated machine learning using Keras</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate"><i class="fa fa-check"></i><b>4.1</b> Tuning the learning rate</a></li>
+<li class="chapter" data-level="4.2" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth"><i class="fa fa-check"></i><b>4.2</b> Effect of MLP depth and breadth</a></li>
+<li class="chapter" data-level="4.3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features"><i class="fa fa-check"></i><b>4.3</b> Dropping high-level features</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="final-model-selection-and-validation.html"><a href="final-model-selection-and-validation.html"><i class="fa fa-check"></i><b>5</b> Final model selection and validation</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/yinchi/harvardx-higgs" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">HarvardX 125.9x Project: Higgs dataset classification</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="gpu-accelerated-machine-learning-using-keras" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> GPU-accelerated machine learning using Keras<a href="gpu-accelerated-machine-learning-using-keras.html#gpu-accelerated-machine-learning-using-keras" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We will use the <code>keras</code> package for machine learning. The <code>keras</code> package allows us
+to model the data using neural networks (NN); in this case, we will use a straightforward
+Multilayer Perceptron (MLP) with an Rectified Linear Unit (ReLU) activation function on
+all hidden nodes and a logistic activation function on the output node, thus giving a final
+estimate between 0 and 1 of the probability that a given observation corresponds to the “signal”
+process. The ReLu activation function, <span class="math inline">\(\mathrm{relu}(x) = \max(0,x)\)</span>, is chosen for its
+simplicity and computational efficiency.</p>
+<p>Note that in theory, an NN with sufficient breadth can approximate any function, even with just a
+single hidden layer <span class="citation">(<a href="#ref-Asadi2010" role="doc-biblioref">Asadi and Jiang 2020</a>)</span>. However, we want a model that can learn the <em>general</em>
+characteristics of the signal and background processes from which our data is obtained.
+Therefore, to avoid overfitting, we withhold 20% of the training data
+in each epoch for validation. Additionally, 50% dropout is applied to each hidden layer, meaning
+that only half of the hidden nodes are used in each training batch. This has also been shown to reduce
+overfitting effectively <span class="citation">(<a href="#ref-Srivastava2014" role="doc-biblioref">Srivastava et al. 2014</a>)</span>.</p>
+<div id="tuning-the-learning-rate" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Tuning the learning rate<a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following code plots the binary cross-entropy (a loss metric for binary classification networks)
+after each training epoch for three different learning rates, using the Adam<span class="citation">(<a href="#ref-Kingma2014" role="doc-biblioref">Kingma and Ba 2014</a>)</span> optimizer.
+We will train networks with 3 hidden layers of 256 nodes each.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-1" aria-hidden="true" tabindex="-1"></a>train_keras_history <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y, depth, breadth,</span>
+<span id="cb27-2"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dropout =</span> <span class="fl">0.5</span>, <span class="at">learning_rate=</span><span class="fl">0.0002</span>, <span class="at">epochs =</span> <span class="dv">50</span>) {</span>
+<span id="cb27-3"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-3" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>()</span>
+<span id="cb27-4"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-4" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span></span>
+<span id="cb27-5"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(breadth, <span class="st">&#39;relu&#39;</span>, <span class="at">input_shape =</span> <span class="fu">ncol</span>(x)) <span class="sc">|&gt;</span></span>
+<span id="cb27-6"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout)</span>
+<span id="cb27-7"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-8"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># subsequent hidden layers</span></span>
+<span id="cb27-9"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (depth <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb27-10"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (layer <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">2</span>,depth)) {</span>
+<span id="cb27-11"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-11" aria-hidden="true" tabindex="-1"></a>      model <span class="sc">|&gt;</span> <span class="fu">layer_dense</span>(breadth, <span class="st">&#39;relu&#39;</span>) <span class="sc">|&gt;</span> <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout)</span>
+<span id="cb27-12"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-13"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-14"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-15"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output layer (logistic activation function for binary classification)</span></span>
+<span id="cb27-16"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-16" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span> <span class="fu">layer_dense</span>(<span class="dv">1</span>, <span class="st">&#39;sigmoid&#39;</span>)</span>
+<span id="cb27-17"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-18"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compile model</span></span>
+<span id="cb27-19"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-19" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span></span>
+<span id="cb27-20"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-20" aria-hidden="true" tabindex="-1"></a>    keras<span class="sc">::</span><span class="fu">compile</span>(</span>
+<span id="cb27-21"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">loss =</span> <span class="st">&#39;binary_crossentropy&#39;</span>,</span>
+<span id="cb27-22"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">optimizer =</span> <span class="fu">optimizer_adam</span>(<span class="at">learning_rate =</span> learning_rate),</span>
+<span id="cb27-23"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">metrics =</span> <span class="fu">metric_auc</span>()</span>
+<span id="cb27-24"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-25"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-26"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># a larger batch size trains faster but uses more GPU memory</span></span>
+<span id="cb27-27"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-27" aria-hidden="true" tabindex="-1"></a>  history <span class="ot">&lt;-</span> model <span class="sc">|&gt;</span></span>
+<span id="cb27-28"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(x, y, <span class="at">epochs =</span> epochs, <span class="at">batch_size =</span> <span class="dv">8192</span>, <span class="at">validation_split =</span> <span class="fl">0.2</span>)</span>
+<span id="cb27-29"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-30"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(model)</span>
+<span id="cb27-31"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gc</span>()</span>
+<span id="cb27-32"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">k_clear_session</span>()</span>
+<span id="cb27-33"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-33" aria-hidden="true" tabindex="-1"></a>  tensorflow<span class="sc">::</span>tf<span class="sc">$</span>compat<span class="sc">$</span>v1<span class="sc">$</span><span class="fu">reset_default_graph</span>()</span>
+<span id="cb27-34"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-35"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-35" aria-hidden="true" tabindex="-1"></a>  history</span>
+<span id="cb27-36"><a href="gpu-accelerated-machine-learning-using-keras.html#cb27-36" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-1" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span>
+<span id="cb28-2"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;cache/nn_results.RDdata&#39;</span>)) {</span>
+<span id="cb28-3"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-3" aria-hidden="true" tabindex="-1"></a>  history1 <span class="ot">&lt;-</span> <span class="fu">train_keras_history</span>(x, y, <span class="dv">3</span>, <span class="dv">256</span>, <span class="at">learning_rate =</span> <span class="fl">1e-3</span>)</span>
+<span id="cb28-4"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-4" aria-hidden="true" tabindex="-1"></a>  history2 <span class="ot">&lt;-</span> <span class="fu">train_keras_history</span>(x, y, <span class="dv">3</span>, <span class="dv">256</span>, <span class="at">learning_rate =</span> <span class="fl">5e-4</span>)</span>
+<span id="cb28-5"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-5" aria-hidden="true" tabindex="-1"></a>  history3 <span class="ot">&lt;-</span> <span class="fu">train_keras_history</span>(x, y, <span class="dv">3</span>, <span class="dv">256</span>, <span class="at">learning_rate =</span> <span class="fl">2e-4</span>)</span>
+<span id="cb28-6"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(history1, history2, history3, <span class="at">file =</span> <span class="st">&#39;cache/nn_results.RDdata&#39;</span>)</span>
+<span id="cb28-7"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-8"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;cache/nn_results.RDdata&#39;</span>)</span>
+<span id="cb28-9"><a href="gpu-accelerated-machine-learning-using-keras.html#cb28-9" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb29-2"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">epoch =</span> <span class="fu">seq</span>(<span class="dv">50</span>),</span>
+<span id="cb29-3"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">1e-3</span><span class="st">`</span> <span class="ot">=</span> history1<span class="sc">$</span>metrics<span class="sc">$</span>val_loss,</span>
+<span id="cb29-4"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">5e-4</span><span class="st">`</span> <span class="ot">=</span> history2<span class="sc">$</span>metrics<span class="sc">$</span>val_loss,</span>
+<span id="cb29-5"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">2e-4</span><span class="st">`</span> <span class="ot">=</span> history3<span class="sc">$</span>metrics<span class="sc">$</span>val_loss) <span class="sc">|&gt;</span></span>
+<span id="cb29-6"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>epoch,<span class="st">&#39;lr&#39;</span>,<span class="at">values_to =</span> <span class="st">&#39;loss&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb29-7"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lr =</span> <span class="fu">as.numeric</span>(lr)) <span class="sc">|&gt;</span> </span>
+<span id="cb29-8"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(epoch,loss, <span class="at">color=</span><span class="fu">as.factor</span>(lr))) <span class="sc">+</span></span>
+<span id="cb29-9"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb29-10"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&#39;Epochs&#39;</span>) <span class="sc">+</span></span>
+<span id="cb29-11"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&#39;Binary cross-entropy&#39;</span>) <span class="sc">+</span></span>
+<span id="cb29-12"><a href="gpu-accelerated-machine-learning-using-keras.html#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color=</span><span class="st">&#39;Learning Rate&#39;</span>)</span></code></pre></div>
+<p><img src="higgs_files/figure-html/unnamed-chunk-1-1.png" width="720" /></p>
+<p>The results show that a smaller learning rate provides smoother loss as a function of the
+number of training epochs, but takes longer to train. Nevertheless, even the lowest learning
+rate shown above results in reasonably fast convergence. On the other hand, a learning rate that is
+too large may lead to non-convergence of the loss function. Based on the above results,
+we will use a training rate of <span class="math inline">\(2\times10^{-4}\)</span> for all subsequent modelling.</p>
+</div>
+<div id="effect-of-mlp-depth-and-breadth" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Effect of MLP depth and breadth<a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following function trains an MLP with the specified
+number of hidden layers (<code>depth</code>) and nodes per hidden layer (<code>breadth</code>),
+and returns the model and training history.
+We will use the Adam<span class="citation">(<a href="#ref-Kingma2014" role="doc-biblioref">Kingma and Ba 2014</a>)</span> optimizer with a learning rate of <span class="math inline">\(2\times 10^{-4}\)</span> and 50 epochs.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tuning values given defaults are not included in our parameter search for this</span></span>
+<span id="cb30-2"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># project.</span></span>
+<span id="cb30-3"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-3" aria-hidden="true" tabindex="-1"></a>train_keras_auc <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y,</span>
+<span id="cb30-4"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-4" aria-hidden="true" tabindex="-1"></a>                        depth, breadth,</span>
+<span id="cb30-5"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dropout =</span> <span class="fl">0.5</span>, <span class="at">learning_rate =</span> <span class="fl">0.0002</span>,</span>
+<span id="cb30-6"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">epochs =</span> <span class="dv">50</span>) {</span>
+<span id="cb30-7"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&#39;DNN: &#39;</span>, depth, <span class="st">&#39;x&#39;</span>, breadth, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb30-8"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-9"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-9" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>()</span>
+<span id="cb30-10"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-11"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># By default, Keras applies Glorot uniform initialization for weights</span></span>
+<span id="cb30-12"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># and zero initialization for biases. Glorot uniform initialization</span></span>
+<span id="cb30-13"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># samples weights from Uniform(-sqrt(6/n),sqrt(6/n)) where n is the</span></span>
+<span id="cb30-14"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sum of in and out nodes between two input/hidden/output layers.</span></span>
+<span id="cb30-15"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-16"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># first hidden layer</span></span>
+<span id="cb30-17"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-17" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span></span>
+<span id="cb30-18"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(<span class="at">units =</span> breadth,</span>
+<span id="cb30-19"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-19" aria-hidden="true" tabindex="-1"></a>                <span class="at">activation =</span> <span class="st">&#39;relu&#39;</span>,</span>
+<span id="cb30-20"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-20" aria-hidden="true" tabindex="-1"></a>                <span class="at">input_shape =</span> <span class="fu">ncol</span>(x)) <span class="sc">|&gt;</span></span>
+<span id="cb30-21"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout)</span>
+<span id="cb30-22"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-23"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># subsequent hidden layers</span></span>
+<span id="cb30-24"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (depth <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb30-25"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (layer <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">2</span>,depth)) {</span>
+<span id="cb30-26"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-26" aria-hidden="true" tabindex="-1"></a>      model <span class="sc">|&gt;</span></span>
+<span id="cb30-27"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-27" aria-hidden="true" tabindex="-1"></a>        <span class="fu">layer_dense</span>(<span class="at">units =</span> breadth, <span class="at">activation =</span> <span class="st">&#39;relu&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-28"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-28" aria-hidden="true" tabindex="-1"></a>        <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout)</span>
+<span id="cb30-29"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb30-30"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-31"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-32"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output layer (logistic activation function for binary classification)</span></span>
+<span id="cb30-33"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-33" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span></span>
+<span id="cb30-34"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layer_dense</span>(<span class="at">units =</span> <span class="dv">1</span>, <span class="at">activation =</span> <span class="st">&#39;sigmoid&#39;</span>)</span>
+<span id="cb30-35"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-36"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compile model</span></span>
+<span id="cb30-37"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-37" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span></span>
+<span id="cb30-38"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-38" aria-hidden="true" tabindex="-1"></a>    keras<span class="sc">::</span><span class="fu">compile</span>(</span>
+<span id="cb30-39"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">loss =</span> <span class="st">&#39;binary_crossentropy&#39;</span>,</span>
+<span id="cb30-40"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">optimizer =</span> <span class="fu">optimizer_adam</span>(<span class="at">learning_rate =</span> learning_rate),</span>
+<span id="cb30-41"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">metrics =</span> <span class="fu">metric_auc</span>()</span>
+<span id="cb30-42"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-42" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb30-43"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-44"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># a larger batch size trains faster but uses more GPU memory</span></span>
+<span id="cb30-45"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-45" aria-hidden="true" tabindex="-1"></a>  history <span class="ot">&lt;-</span> model <span class="sc">|&gt;</span></span>
+<span id="cb30-46"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(x, y,</span>
+<span id="cb30-47"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">epochs =</span> epochs, <span class="at">batch_size =</span> <span class="dv">8192</span>,</span>
+<span id="cb30-48"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">validation_split =</span> <span class="fl">0.2</span>)</span>
+<span id="cb30-49"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-50"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-50" aria-hidden="true" tabindex="-1"></a>  ypred <span class="ot">&lt;-</span> model <span class="sc">|&gt;</span> <span class="fu">predict</span>(x, <span class="at">batch_size =</span> <span class="dv">8192</span>) <span class="sc">|&gt;</span> <span class="fu">as.vector</span>()</span>
+<span id="cb30-51"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-51" aria-hidden="true" tabindex="-1"></a>  auc <span class="ot">&lt;-</span> <span class="fu">roc</span>(y,ypred) <span class="sc">|&gt;</span> <span class="fu">auc</span>() <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb30-52"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-53"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(model)</span>
+<span id="cb30-54"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gc</span>()</span>
+<span id="cb30-55"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">k_clear_session</span>()</span>
+<span id="cb30-56"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-56" aria-hidden="true" tabindex="-1"></a>  tensorflow<span class="sc">::</span>tf<span class="sc">$</span>compat<span class="sc">$</span>v1<span class="sc">$</span><span class="fu">reset_default_graph</span>()</span>
+<span id="cb30-57"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-57" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-58"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-58" aria-hidden="true" tabindex="-1"></a>  auc</span>
+<span id="cb30-59"><a href="gpu-accelerated-machine-learning-using-keras.html#cb30-59" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The following code computes and plots the AUC for NNs with 1 to 5 hidden layers and
+from 16 to 2048 hidden nodes in each hidden layer:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Try NN training for different NN depths and breadths.  Cache using .RData file.</span></span>
+<span id="cb31-2"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-2" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span>
+<span id="cb31-3"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;cache/nn_results2.RDdata&#39;</span>)) {</span>
+<span id="cb31-4"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-4" aria-hidden="true" tabindex="-1"></a>  nn_results <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">depth =</span> <span class="fu">integer</span>(), <span class="at">breadth =</span> <span class="fu">integer</span>(), <span class="at">auc =</span> <span class="fu">numeric</span>())</span>
+<span id="cb31-5"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-6"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(l <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) { <span class="co"># depth: number of hidden layers</span></span>
+<span id="cb31-7"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (n <span class="cf">in</span> <span class="dv">2</span><span class="sc">^</span><span class="fu">c</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">11</span>)) { <span class="co"># breadth: hidden nodes per layer</span></span>
+<span id="cb31-8"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-8" aria-hidden="true" tabindex="-1"></a>      nn_results <span class="ot">&lt;-</span> nn_results <span class="sc">|&gt;</span></span>
+<span id="cb31-9"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">add_row</span>(<span class="at">depth =</span> l,</span>
+<span id="cb31-10"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">breadth =</span> n,</span>
+<span id="cb31-11"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">auc =</span> <span class="fu">train_keras_auc</span>(x, y, l, n))</span>
+<span id="cb31-12"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-13"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-14"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(nn_results, <span class="at">file =</span> <span class="st">&#39;cache/nn_results2.RDdata&#39;</span>)</span>
+<span id="cb31-15"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-16"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;cache/nn_results2.RDdata&#39;</span>)</span>
+<span id="cb31-17"><a href="gpu-accelerated-machine-learning-using-keras.html#cb31-17" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># heatmap of AUC vs depth and breadth</span></span>
+<span id="cb32-2"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-2" aria-hidden="true" tabindex="-1"></a>nn_results <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">as.factor</span>(depth), <span class="fu">as.factor</span>(breadth), <span class="at">fill =</span> auc)) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb32-4"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(auc,<span class="dv">4</span>)), <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb32-6"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&#39;Depth (number of hidden layers)&#39;</span>) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="gpu-accelerated-machine-learning-using-keras.html#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&#39;Breadth (hidden nodes per layer)&#39;</span>)</span></code></pre></div>
+<p><img src="higgs_files/figure-html/Keras-tuning-plot-1.png" width="648" /></p>
+<p>The results show that for NNs with at least 64 nodes per hidden layer, there is little difference
+between having three layers or more; however, there is a slight advantage to having three hidden
+layers compared to two. In all cases, the widest NN at each depth provides the best AUC.
+Therefore, the 3x2048 NN appears to provide the best trade-off between network complexity and AUC.
+If memory or compute resources are limited, a 2x512 NN also appears to give reasonable estimation
+power.</p>
+</div>
+<div id="dropping-high-level-features" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Dropping high-level features<a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Since the high-level features in the HIGGS dataset are derived from the other, low-level features,
+it is clear that a good model should be able to learn the data without use of these features.
+The following code trains a 3x20484 NN on the HIGGS dataset once using all features and once
+just the low-level features:</p>
+<p>The following code computes and prints the AUC for the both models:</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Asadi2010" class="csl-entry">
+Asadi, Behnam, and Hui Jiang. 2020. <span>“On Approximation Capabilities of ReLU Activation and Softmax Output Layer in Neural Networks.”</span> <a href="https://doi.org/10.48550/arXiv.2002.04060">https://doi.org/10.48550/arXiv.2002.04060</a>.
+</div>
+<div id="ref-Kingma2014" class="csl-entry">
+Kingma, Diederik P., and Jimmy Ba. 2014. <span>“Adam: A Method for Stochastic Optimization.”</span> <a href="https://doi.org/10.48550/arXiv.1412.6980">https://doi.org/10.48550/arXiv.1412.6980</a>.
+</div>
+<div id="ref-Srivastava2014" class="csl-entry">
+Srivastava, Nitish, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov. 2014. <span>“Dropout: A Simple Way to Prevent Neural Networks from Overfitting.”</span> <em>Journal of Machine Learning Research</em> 15 (56): 1929–58. <a href="http://jmlr.org/papers/v15/srivastava14a.html">http://jmlr.org/papers/v15/srivastava14a.html</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="lightgbm.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="final-model-selection-and-validation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin"]
+},
+"fontsettings": {
+"theme": "sepia",
+"family": "serif",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/yinchi/harvardx-higgs/blob/main/40-keras.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["higgs.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

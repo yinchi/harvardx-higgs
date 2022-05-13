@@ -1,11 +1,10 @@
 --- 
-title: 'Gitbook template'
+title: 'HarvardX 125.9x Project: Higgs dataset classification'
 author: "Firstname Lastname"
 date: "`r Sys.Date()`"
 documentclass: article
 mainfont: Times New Roman
-mathfont: Cambria Math
-monofont: Cascadia Code
+monofont: Fira Code
 geometry: margin=2.5cm
 bibliography: book.bib
 biblio-style: acm
@@ -17,10 +16,9 @@ site: bookdown::bookdown_site
 
 # Preface {-}
 
-This template generates output in both [HTML](index.html) and [PDF](merged.pdf) form.
-Code in the PDF output is typeset in 
-[Cascadia Code](https://github.com/microsoft/cascadia-code), with code ligatures enabled.
-A similar font, [Fira Code](https://github.com/tonsky/FiraCode), is used in the HTML version.
+This template generates output in both [HTML](index.html) and [PDF](higgs.pdf) form.
+Code chunks are typeset in 
+[Fira Code](https://github.com/tonsky/FiraCode), with code ligatures enabled.
 
 ## R setup
 
@@ -53,19 +51,16 @@ if (packageVersion('base') < '4.1.0') {
 
 if(!require("pacman")) install.packages("pacman")
 library(pacman)
-p_load(tidyverse)
+p_load(data.table, dtplyr, tidyverse, R.utils, Rfast,
+       lightgbm, keras, caret, pROC, knitr, conflicted)
+conflict_prefer('summarize', 'dplyr')
+conflict_prefer('summarise', 'dplyr')
+conflict_prefer('filter', 'dplyr')
+conflict_prefer('between', 'dplyr')
+conflict_prefer('auc', 'pROC')
+
+if(!is_keras_available()) install_keras()
+
+# Somehow, this seems to prevent memory leaks
+tensorflow::tf$compat$v1$disable_eager_execution()
 ```
-
-Plot example: Anscombe's quartet @Anscombe1973
-
-```{r Plot-example, fig.height=7, fig.width=7}
-anscombe %>% 
-  gather(variable.x, value, -y1, -y2, -y3, -y4) |>
-  select(variable.x = value) |>
-  bind_cols(gather(anscombe, variable, value, -x1, -x2, -x3, -x4)) |>
-  select(x = variable.x, variable, y = value) |>
-  ggplot(aes(x,y)) + facet_wrap(~variable) +
-  geom_point() + stat_smooth(method="lm",fullrange=T,se=F) +
-  theme(aspect.ratio=1.)
-```
-

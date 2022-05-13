@@ -10,3 +10,4 @@ _main.Rmd
 *.bak
 /*.Rdata
 *.log
+data_raw

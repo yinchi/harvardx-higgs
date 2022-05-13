@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 lightgbm | HarvardX 125.9x Project: Higgs dataset classification</title>
+  <meta name="description" content="See also: _output.yml, _bookdown.yml" />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 lightgbm | HarvardX 125.9x Project: Higgs dataset classification" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="See also: _output.yml, _bookdown.yml" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 lightgbm | HarvardX 125.9x Project: Higgs dataset classification" />
+  
+  <meta name="twitter:description" content="See also: _output.yml, _bookdown.yml" />
+  
+
+<meta name="author" content="Firstname Lastname" />
+
+
+<meta name="date" content="2022-05-13" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-analysis.html"/>
+<link rel="next" href="gpu-accelerated-machine-learning-using-keras.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">HarvardX 125.9: Higgs data analysis</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="0.1" data-path="index.html"><a href="index.html#r-setup"><i class="fa fa-check"></i><b>0.1</b> R setup</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-higgs-dataset"><i class="fa fa-check"></i><b>1.1</b> The HIGGS dataset</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#creating-the-final-test-splits"><i class="fa fa-check"></i><b>1.2</b> Creating the final test splits</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#optimization-metric"><i class="fa fa-check"></i><b>1.3</b> Optimization metric</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="data-analysis.html"><a href="data-analysis.html"><i class="fa fa-check"></i><b>2</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-analysis.html"><a href="data-analysis.html#low-level-momentum-features"><i class="fa fa-check"></i><b>2.1</b> Low-level momentum features</a></li>
+<li class="chapter" data-level="2.2" data-path="data-analysis.html"><a href="data-analysis.html#angular-features"><i class="fa fa-check"></i><b>2.2</b> Angular features</a></li>
+<li class="chapter" data-level="2.3" data-path="data-analysis.html"><a href="data-analysis.html#b-tag-features"><i class="fa fa-check"></i><b>2.3</b> <span class="math inline">\(b\)</span>-tag features</a></li>
+<li class="chapter" data-level="2.4" data-path="data-analysis.html"><a href="data-analysis.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
+<li class="chapter" data-level="2.5" data-path="data-analysis.html"><a href="data-analysis.html#final-data-transformation"><i class="fa fa-check"></i><b>2.5</b> Final data transformation</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="lightgbm.html"><a href="lightgbm.html"><i class="fa fa-check"></i><b>3</b> <code>lightgbm</code></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="lightgbm.html"><a href="lightgbm.html#lightgbm-model-with-optimized-drop-rate"><i class="fa fa-check"></i><b>3.1</b> <code>lightgbm</code> model with optimized drop rate</a></li>
+<li class="chapter" data-level="3.2" data-path="lightgbm.html"><a href="lightgbm.html#feature-importance"><i class="fa fa-check"></i><b>3.2</b> Feature importance</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html"><i class="fa fa-check"></i><b>4</b> GPU-accelerated machine learning using Keras</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate"><i class="fa fa-check"></i><b>4.1</b> Tuning the learning rate</a></li>
+<li class="chapter" data-level="4.2" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth"><i class="fa fa-check"></i><b>4.2</b> Effect of MLP depth and breadth</a></li>
+<li class="chapter" data-level="4.3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features"><i class="fa fa-check"></i><b>4.3</b> Dropping high-level features</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="final-model-selection-and-validation.html"><a href="final-model-selection-and-validation.html"><i class="fa fa-check"></i><b>5</b> Final model selection and validation</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/yinchi/harvardx-higgs" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">HarvardX 125.9x Project: Higgs dataset classification</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="lightgbm" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Chapter 3</span> <code>lightgbm</code><a href="lightgbm.html#lightgbm" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>We will use <code>lightgbm</code>’s implementation of the Dart algorithm for boosted regression trees with
+dropouts. The benefit of Dart compared to similar algorithms is that it avoids
+over-specialization, in which later trees “tend to impact the prediction of only a few instances”
+<span class="citation">(<a href="#ref-Vinayak2015" role="doc-biblioref">Korlakai Vinayak and Gilad-Bachrach 2015</a>)</span>. The following code plots AUC against the dropout rate (i.e., the ratio of
+trees dropped at each dropout) for the Dart algorithm as applied to our training data
+with <strong>3-fold validation</strong>:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="lightgbm.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rates</span></span>
+<span id="cb17-2"><a href="lightgbm.html#cb17-2" aria-hidden="true" tabindex="-1"></a>dr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.02</span>, <span class="fu">seq</span>(<span class="fl">0.025</span>, <span class="fl">0.07</span>, <span class="fl">0.005</span>), <span class="fl">0.08</span>, <span class="fl">0.09</span>, <span class="fl">0.1</span>, <span class="fl">0.15</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>)</span>
+<span id="cb17-3"><a href="lightgbm.html#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="lightgbm.html#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Although we are not using tensorflow here, this is a convenience function</span></span>
+<span id="cb17-5"><a href="lightgbm.html#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># to set multiple seeds across R and Python (i.e. reticulate)</span></span>
+<span id="cb17-6"><a href="lightgbm.html#cb17-6" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span>
+<span id="cb17-7"><a href="lightgbm.html#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="lightgbm.html#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;cache/gbm_results.RData&#39;</span>)) {</span>
+<span id="cb17-9"><a href="lightgbm.html#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Train</span></span>
+<span id="cb17-10"><a href="lightgbm.html#cb17-10" aria-hidden="true" tabindex="-1"></a>  gbm_scores <span class="ot">&lt;-</span> <span class="fu">sapply</span>(dr, <span class="cf">function</span>(d) {</span>
+<span id="cb17-11"><a href="lightgbm.html#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gc</span>()</span>
+<span id="cb17-12"><a href="lightgbm.html#cb17-12" aria-hidden="true" tabindex="-1"></a>    params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb17-13"><a href="lightgbm.html#cb17-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">num_threads =</span> <span class="dv">32</span>, <span class="co"># hardware-dependent</span></span>
+<span id="cb17-14"><a href="lightgbm.html#cb17-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">boosting =</span> <span class="st">&quot;dart&quot;</span>,</span>
+<span id="cb17-15"><a href="lightgbm.html#cb17-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">metric =</span> <span class="st">&quot;auc&quot;</span>,</span>
+<span id="cb17-16"><a href="lightgbm.html#cb17-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">learning_rate =</span> <span class="fl">1.0</span>, <span class="co"># found to be a good value, too large leads to instability</span></span>
+<span id="cb17-17"><a href="lightgbm.html#cb17-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">42</span>, <span class="co"># note, any other seeds with default values take priority</span></span>
+<span id="cb17-18"><a href="lightgbm.html#cb17-18" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb17-19"><a href="lightgbm.html#cb17-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">drop_rate =</span> d</span>
+<span id="cb17-20"><a href="lightgbm.html#cb17-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-21"><a href="lightgbm.html#cb17-21" aria-hidden="true" tabindex="-1"></a>    gbmodel <span class="ot">&lt;-</span> <span class="fu">lgb.cv</span>(</span>
+<span id="cb17-22"><a href="lightgbm.html#cb17-22" aria-hidden="true" tabindex="-1"></a>      params, x, <span class="at">label =</span> y,</span>
+<span id="cb17-23"><a href="lightgbm.html#cb17-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">nrounds =</span> <span class="dv">100</span>, <span class="at">nfold =</span> <span class="dv">3</span>, <span class="at">obj =</span> <span class="st">&#39;binary&#39;</span>, <span class="at">verbose =</span> <span class="dv">0</span></span>
+<span id="cb17-24"><a href="lightgbm.html#cb17-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-25"><a href="lightgbm.html#cb17-25" aria-hidden="true" tabindex="-1"></a>    gbmodel<span class="sc">$</span>best_score</span>
+<span id="cb17-26"><a href="lightgbm.html#cb17-26" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb17-27"><a href="lightgbm.html#cb17-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-28"><a href="lightgbm.html#cb17-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save</span></span>
+<span id="cb17-29"><a href="lightgbm.html#cb17-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(gbm_scores, <span class="at">file =</span> <span class="st">&#39;cache/gbm_results.RData&#39;</span>)</span>
+<span id="cb17-30"><a href="lightgbm.html#cb17-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-31"><a href="lightgbm.html#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="lightgbm.html#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;cache/gbm_results.RData&#39;</span>)</span>
+<span id="cb17-33"><a href="lightgbm.html#cb17-33" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="lightgbm.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(dr,gbm_scores) <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="lightgbm.html#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(dr,gbm_scores)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="lightgbm.html#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb18-4"><a href="lightgbm.html#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb18-5"><a href="lightgbm.html#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&#39;Drop rate&#39;</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="lightgbm.html#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&#39;AUC&#39;</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="lightgbm.html#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_gray</span>()</span></code></pre></div>
+<p><img src="higgs_files/figure-html/lightgbm-AUC-plot-1.png" width="576" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="lightgbm.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;The best AUC of&#39;</span>, <span class="fu">max</span>(gbm_scores),</span>
+<span id="cb19-2"><a href="lightgbm.html#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;is achieved with a drop rate of&#39;</span>, dr[<span class="fu">which.max</span>(gbm_scores)], <span class="st">&#39;.</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## The best AUC of 0.8232643 is achieved with a drop rate of 0.04 .</code></pre>
+<p>Note, however, that the AUC is at least 0.823 for a drop rate between 0.04 and 0.065:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="lightgbm.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(gbm_scores[<span class="fu">between</span>(dr,<span class="fl">0.04</span>,<span class="fl">0.065</span>)])</span></code></pre></div>
+<pre><code>## [1] 0.8230695</code></pre>
+<div id="lightgbm-model-with-optimized-drop-rate" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> <code>lightgbm</code> model with optimized drop rate<a href="lightgbm.html#lightgbm-model-with-optimized-drop-rate" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We recompute the <code>lightgbm</code> model using the best drop rate found above:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="lightgbm.html#cb23-1" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span>
+<span id="cb23-2"><a href="lightgbm.html#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;cache/gbm_results_2.RData&#39;</span>)) {</span>
+<span id="cb23-3"><a href="lightgbm.html#cb23-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-4"><a href="lightgbm.html#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the best drop rate from before</span></span>
+<span id="cb23-5"><a href="lightgbm.html#cb23-5" aria-hidden="true" tabindex="-1"></a>  best_dr <span class="ot">&lt;-</span> dr[<span class="fu">which.max</span>(gbm_scores)]</span>
+<span id="cb23-6"><a href="lightgbm.html#cb23-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-7"><a href="lightgbm.html#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Train the model again</span></span>
+<span id="cb23-8"><a href="lightgbm.html#cb23-8" aria-hidden="true" tabindex="-1"></a>  params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb23-9"><a href="lightgbm.html#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">num_threads =</span> <span class="dv">32</span>, <span class="co"># hardware-dependent</span></span>
+<span id="cb23-10"><a href="lightgbm.html#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">boosting =</span> <span class="st">&quot;dart&quot;</span>,</span>
+<span id="cb23-11"><a href="lightgbm.html#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">metric =</span> <span class="st">&quot;auc&quot;</span>,</span>
+<span id="cb23-12"><a href="lightgbm.html#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">learning_rate =</span> <span class="fl">1.0</span>, <span class="co"># found to be a good value, too large leads to instability</span></span>
+<span id="cb23-13"><a href="lightgbm.html#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">42</span>, <span class="co"># note, any other seeds with default values take priority</span></span>
+<span id="cb23-14"><a href="lightgbm.html#cb23-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-15"><a href="lightgbm.html#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">drop_rate =</span> best_dr</span>
+<span id="cb23-16"><a href="lightgbm.html#cb23-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-17"><a href="lightgbm.html#cb23-17" aria-hidden="true" tabindex="-1"></a>  gbmodel <span class="ot">&lt;-</span> <span class="fu">lgb.train</span>(</span>
+<span id="cb23-18"><a href="lightgbm.html#cb23-18" aria-hidden="true" tabindex="-1"></a>    params, <span class="fu">lgb.Dataset</span>(x, <span class="at">label =</span> y),</span>
+<span id="cb23-19"><a href="lightgbm.html#cb23-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">nrounds =</span> <span class="dv">100</span>, <span class="at">obj =</span> <span class="st">&#39;binary&#39;</span>, <span class="at">verbose =</span> <span class="dv">0</span></span>
+<span id="cb23-20"><a href="lightgbm.html#cb23-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-21"><a href="lightgbm.html#cb23-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-22"><a href="lightgbm.html#cb23-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute AUC</span></span>
+<span id="cb23-23"><a href="lightgbm.html#cb23-23" aria-hidden="true" tabindex="-1"></a>  auc_lgb_best <span class="ot">&lt;-</span> <span class="fu">auc</span>(y,<span class="fu">predict</span>(gbmodel,x)) <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb23-24"><a href="lightgbm.html#cb23-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-25"><a href="lightgbm.html#cb23-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save AUC and model</span></span>
+<span id="cb23-26"><a href="lightgbm.html#cb23-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(auc_lgb_best, gbmodel, <span class="at">file=</span><span class="st">&#39;cache/gbm_results_2.RData&#39;</span>)</span>
+<span id="cb23-27"><a href="lightgbm.html#cb23-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">lgb.dump</span>(gbmodel), <span class="at">file=</span><span class="st">&#39;cache/lgb_model.json&#39;</span>) <span class="co"># (almost) human-readable version</span></span>
+<span id="cb23-28"><a href="lightgbm.html#cb23-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-29"><a href="lightgbm.html#cb23-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-30"><a href="lightgbm.html#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;cache/gbm_results_2.RData&#39;</span>)</span>
+<span id="cb23-31"><a href="lightgbm.html#cb23-31" aria-hidden="true" tabindex="-1"></a><span class="fu">lgb.restore_handle</span>(gbmodel) <span class="co"># if model is needed, we need to fully restore it</span></span>
+<span id="cb23-32"><a href="lightgbm.html#cb23-32" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span></code></pre></div>
+<p>The AUC of the model on the training set is:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="lightgbm.html#cb24-1" aria-hidden="true" tabindex="-1"></a>auc_lgb_best</span></code></pre></div>
+<pre><code>## [1] 0.8249238</code></pre>
+</div>
+<div id="feature-importance" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Feature importance<a href="lightgbm.html#feature-importance" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following code plots the feature importance of the ten most important features in the HIGGS
+dataset, based on the trained model results:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="lightgbm.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">cex=</span><span class="fl">0.7</span>)</span>
+<span id="cb26-2"><a href="lightgbm.html#cb26-2" aria-hidden="true" tabindex="-1"></a>gbmodel <span class="sc">|&gt;</span> <span class="fu">lgb.importance</span>() <span class="sc">|&gt;</span> <span class="fu">lgb.plot.importance</span>(<span class="at">top_n =</span> <span class="dv">10</span>)</span></code></pre></div>
+<p><img src="higgs_files/figure-html/lgb-importance-1.png" width="576" /></p>
+<p>It is shown that the top five features are all “high-level” features. However, several of the
+low-level features relating to transverse momentum also appear in the top ten. Finally, none
+of the directional (‘<code>_eta</code>’ or ‘<code>_phi</code>’) low-level parameters appear in the top ten important
+features.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Vinayak2015" class="csl-entry">
+Korlakai Vinayak, Rashmi, and Ran Gilad-Bachrach. 2015. <span>“<span class="nocase">DART: Dropouts meet Multiple Additive Regression Trees</span>.”</span> In <em>Proceedings of the 18th International Conference on Artificial Intelligence and Statistics</em>, 38:489–97. Proceedings of Machine Learning Research. <a href="https://proceedings.mlr.press/v38/korlakaivinayak15.html">https://proceedings.mlr.press/v38/korlakaivinayak15.html</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="gpu-accelerated-machine-learning-using-keras.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin"]
+},
+"fontsettings": {
+"theme": "sepia",
+"family": "serif",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/yinchi/harvardx-higgs/blob/main/30-lightgbm.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["higgs.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

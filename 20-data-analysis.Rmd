@@ -1,0 +1,214 @@
+# Data analysis
+
+In this section, we analyze the various input features of the HIGGS dataset and apply
+deskewing and $z$-score normalization.
+
+## Low-level momentum features
+
+The input features containing `_pT`  are related to transverse (perpendicular to the input beams)
+momentum, as is the high-level feature `missing_E_mag`.  Histograms of these features
+are plotted as follows:
+
+```{r Hist-momentum-features, fig.height=3.5, fig.width=7}
+
+x |>
+  select(c(contains('_pT'), 'missing_E_mag')) |>
+  as.data.frame() |>
+  gather() |>
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~key, scales = "free", nrow = 2) +
+  ggtitle('Momentum features')
+```
+
+The momentum features are all quite skewed. To deskew the data, we apply a log transformation:
+
+```{r Hist-momentum-features-log, fig.height=3.5, fig.width=7}
+
+x |>
+  select(c(contains('_pT'), 'missing_E_mag')) |>
+  as.data.frame() |>
+  log() |>
+  gather() |>
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~key, scales = "free", nrow = 2) +
+  ggtitle('Momentum features (log transform)')
+```
+
+The skewness of the data before and after log transformation is as follows:
+
+```{r Skew-momentum-features}
+
+tibble(
+  Feature = x |>
+    select(c(contains('_pT'), 'missing_E_mag')) |>
+    as.data.table() |>
+    colnames(),
+  Skewness = x |>
+    select(c(contains('_pT'), 'missing_E_mag')) |>
+    as.data.table() |>
+    as.matrix() |>
+    colskewness(),
+  'Skewness (log)' = x |>
+    select(c(contains('_pT'), 'missing_E_mag')) |>
+    as.data.table() |>
+    log() |>
+    as.matrix() |>
+    colskewness()
+) |>
+  kable(align = 'lrr', booktabs = T, linesep = '')
+```
+
+## Angular features
+
+The features containing `_eta` or `_phi` describe angular data of the detected products
+of the simulated collision processes. Histograms for these features are as follows:
+
+```{r Hist-angular-features, fig.height=5, fig.width=6}
+
+x |>
+  select(c(contains('_eta'), contains('_phi'))) |>
+  as.data.frame() |>
+  gather() |>
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~key, scales = "free_y", nrow = 3) +
+  xlim(-pi,pi) +
+  ggtitle('Angular features')
+```
+
+The histograms above do not show significant skew; therefore, deskewing will not be
+applied to these input features.
+
+## $b$-tag features
+
+Each $b$-tag feature contains three possible values:
+
+```{r Hist-btags, fig.height=3.5, fig.width=4}
+
+x |>
+  select(contains('_btag')) |>
+  as.data.frame() |>
+  gather() |>
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~key, scales = "free", nrow = 2) +
+  ggtitle('b-tag features')
+```
+
+Interestingly, the $b$-tag data is encoded to have unit mean, but
+not unit standard deviation:
+
+```{r btag-means}
+
+# b-tag means
+tibble(
+Mean = x |>
+    select(contains('_btag')) |> 
+    as.data.table() |> 
+    as.matrix() |> 
+    colMeans(),
+'Standard Deviation' = x |>
+    select(contains('_btag')) |> 
+    as.data.table() |> 
+    as.matrix() |> 
+    colVars(std=T)
+) |>
+  rownames_to_column('Feature') |>
+  kable(align = 'lrr', booktabs = T, linesep = '')
+```
+
+
+## High-level features
+
+The high-level features for the HIGGS dataset are related to tranverse momentum and, as
+with the low-level momentum features, are quite skewed:
+
+```{r Hist-high-level-features, fig.height=5, fig.width=7}
+
+x |>
+  select(contains('m_')) |>
+  as.data.frame() |>
+  gather() |>
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~key, scales = "free", nrow = 3) +
+  ggtitle('High-level features')
+```
+
+```{r Hist-high-level-features-log, fig.height=5, fig.width=7}
+
+x |>
+  select(contains('m_')) |>
+  as.data.frame() |>
+  log() |>
+  gather() |>
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~key, scales = "free", nrow = 3) +
+  ggtitle('High-level features (log transform)')
+```
+
+The skewness of the high-level features, before and after log transformation,
+are as follows:
+
+```{r Skew-high-level-features}
+
+tibble(
+  Feature = x |>
+    select(contains('m_')) |>
+    as.data.table() |>
+    colnames(),
+  Skewness = x |>
+    select(contains('m_')) |>
+    as.data.table() |>
+    as.matrix() |>
+    colskewness(),
+  'Skewness (log)' = x |>
+    select(contains('m_')) |>
+    as.data.table() |>
+    log() |>
+    as.matrix() |>
+    colskewness()
+) |>
+  kable(align = 'lrr', booktabs = T, linesep = '')
+```
+
+## Final data transformation
+
+The following code applies log transformation to selected columns of the HIGGS
+training dataset. We will also convert our
+data types into matrices here for input into subsequent stages of our analysis:
+
+```{r Log-transform, results='hide'}
+
+# Apply log transform
+x <- x |>
+  mutate(across(
+    c(contains('m_'), contains('_pT'), contains('_mag')),
+    log)) |>
+  as.data.table()
+
+# Convert to matrices
+x <- x %>% as.matrix()
+gc()
+```
+
+The following code then scales the training data to have zero mean and unit
+standard deviation:
+
+```{r Mean-SD-scaling}
+
+m <- colMeans(x)
+sd <- colVars(x, std = T) # std=T -> compute st. dev. instead of variance
+x <- scale(x, center = m, scale = sd)
+```
+
+Finally, we extract the target values to a vector:
+
+```{r Extract-signal}
+
+y <- y$signal
+```
+
