@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>HarvardX 125.9x Project: Higgs dataset classification</title>
   <meta name="description" content="See also: _output.yml, _bookdown.yml" />
-  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
 
   <meta property="og:title" content="HarvardX 125.9x Project: Higgs dataset classification" />
   <meta property="og:type" content="book" />
@@ -20,10 +20,10 @@
   <meta name="twitter:description" content="See also: _output.yml, _bookdown.yml" />
   
 
-<meta name="author" content="Firstname Lastname" />
+<meta name="author" content="Yin-Chi Chan" />
 
 
-<meta name="date" content="2022-05-13" />
+<meta name="date" content="2022-09-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -176,18 +176,13 @@ div.csl-indent {
 <li class="chapter" data-level="2.4" data-path="data-analysis.html"><a href="data-analysis.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
 <li class="chapter" data-level="2.5" data-path="data-analysis.html"><a href="data-analysis.html#final-data-transformation"><i class="fa fa-check"></i><b>2.5</b> Final data transformation</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="lightgbm.html"><a href="lightgbm.html"><i class="fa fa-check"></i><b>3</b> <code>lightgbm</code></a>
+<li class="chapter" data-level="3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html"><i class="fa fa-check"></i><b>3</b> GPU-accelerated machine learning using Keras</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="lightgbm.html"><a href="lightgbm.html#lightgbm-model-with-optimized-drop-rate"><i class="fa fa-check"></i><b>3.1</b> <code>lightgbm</code> model with optimized drop rate</a></li>
-<li class="chapter" data-level="3.2" data-path="lightgbm.html"><a href="lightgbm.html#feature-importance"><i class="fa fa-check"></i><b>3.2</b> Feature importance</a></li>
+<li class="chapter" data-level="3.1" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate"><i class="fa fa-check"></i><b>3.1</b> Tuning the learning rate</a></li>
+<li class="chapter" data-level="3.2" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth"><i class="fa fa-check"></i><b>3.2</b> Effect of MLP depth and breadth</a></li>
+<li class="chapter" data-level="3.3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features"><i class="fa fa-check"></i><b>3.3</b> Dropping high-level features</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html"><i class="fa fa-check"></i><b>4</b> GPU-accelerated machine learning using Keras</a>
-<ul>
-<li class="chapter" data-level="4.1" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate"><i class="fa fa-check"></i><b>4.1</b> Tuning the learning rate</a></li>
-<li class="chapter" data-level="4.2" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth"><i class="fa fa-check"></i><b>4.2</b> Effect of MLP depth and breadth</a></li>
-<li class="chapter" data-level="4.3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features"><i class="fa fa-check"></i><b>4.3</b> Dropping high-level features</a></li>
-</ul></li>
-<li class="chapter" data-level="5" data-path="final-model-selection-and-validation.html"><a href="final-model-selection-and-validation.html"><i class="fa fa-check"></i><b>5</b> Final model selection and validation</a></li>
+<li class="chapter" data-level="4" data-path="final-model-selection-and-validation.html"><a href="final-model-selection-and-validation.html"><i class="fa fa-check"></i><b>4</b> Final model selection and validation</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/yinchi/harvardx-higgs" target="blank">Published with bookdown</a></li>
@@ -211,8 +206,8 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">HarvardX 125.9x Project: Higgs dataset classification</h1>
-<p class="author"><em>Firstname Lastname</em></p>
-<p class="date"><em>2022-05-13</em></p>
+<p class="author"><em>Yin-Chi Chan</em></p>
+<p class="date"><em>2022-09-19</em></p>
 </div>
 <div id="preface" class="section level1 unnumbered hasAnchor">
 <h1>Preface<a href="index.html#preface" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -228,19 +223,22 @@ Code chunks are typeset in
 <span id="cb1-5"><a href="index.html#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-6"><a href="index.html#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;pacman&quot;</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)</span>
-<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
-<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(data.table, dtplyr, tidyverse, R.utils, Rfast,</span>
-<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>       lightgbm, keras, caret, pROC, knitr, conflicted)</span>
-<span id="cb1-11"><a href="index.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;summarize&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
-<span id="cb1-12"><a href="index.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;summarise&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
-<span id="cb1-13"><a href="index.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;filter&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
-<span id="cb1-14"><a href="index.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;between&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
-<span id="cb1-15"><a href="index.html#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;auc&#39;</span>, <span class="st">&#39;pROC&#39;</span>)</span>
-<span id="cb1-16"><a href="index.html#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="index.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">is_keras_available</span>()) <span class="fu">install_keras</span>()</span>
-<span id="cb1-18"><a href="index.html#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="index.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Somehow, this seems to prevent memory leaks</span></span>
-<span id="cb1-20"><a href="index.html#cb1-20" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span>tf<span class="sc">$</span>compat<span class="sc">$</span>v1<span class="sc">$</span><span class="fu">disable_eager_execution</span>()</span></code></pre></div>
+<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;keras&quot;</span>)) {</span>
+<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;keras&quot;</span>)</span>
+<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a>  keras<span class="sc">::</span><span class="fu">install_keras</span>()</span>
+<span id="cb1-11"><a href="index.html#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-12"><a href="index.html#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="index.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb1-14"><a href="index.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(data.table, dtplyr, tidyverse, R.utils, Rfast, knitr,</span>
+<span id="cb1-15"><a href="index.html#cb1-15" aria-hidden="true" tabindex="-1"></a>       lightgbm, keras, caret, pROC, knitr, conflicted)</span>
+<span id="cb1-16"><a href="index.html#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;summarize&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
+<span id="cb1-17"><a href="index.html#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;summarise&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
+<span id="cb1-18"><a href="index.html#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;filter&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
+<span id="cb1-19"><a href="index.html#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;between&#39;</span>, <span class="st">&#39;dplyr&#39;</span>)</span>
+<span id="cb1-20"><a href="index.html#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">conflict_prefer</span>(<span class="st">&#39;auc&#39;</span>, <span class="st">&#39;pROC&#39;</span>)</span>
+<span id="cb1-21"><a href="index.html#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="index.html#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Somehow, this seems to prevent memory leaks</span></span>
+<span id="cb1-23"><a href="index.html#cb1-23" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span>tf<span class="sc">$</span>compat<span class="sc">$</span>v1<span class="sc">$</span><span class="fu">disable_eager_execution</span>()</span></code></pre></div>
 
 </div>
 </div>
@@ -310,7 +308,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
         src = src.replace(/^https?:/, '');

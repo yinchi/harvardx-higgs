@@ -16,6 +16,9 @@ The following code loads the dataset, downloading and unzipping the CSV file as 
 
 ```{r Download-data, results='hide'}
 options(timeout=1800) # Give more time for the download to complete
+if(!dir.exists('data_raw')) {
+  dir.create('data_raw')
+}
 if(!file.exists('data_raw/HIGGS.csv')) {
   download.file(
     'https://archive.ics.uci.edu/ml/machine-learning-databases/00280/HIGGS.csv.gz',

@@ -1,6 +1,6 @@
 --- 
 title: 'HarvardX 125.9x Project: Higgs dataset classification'
-author: "Firstname Lastname"
+author: "Yin-Chi Chan"
 date: "`r Sys.Date()`"
 documentclass: article
 mainfont: Times New Roman
@@ -50,16 +50,19 @@ if (packageVersion('base') < '4.1.0') {
 }
 
 if(!require("pacman")) install.packages("pacman")
+if(!require("keras")) {
+  install.packages("keras")
+  keras::install_keras()
+}
+
 library(pacman)
-p_load(data.table, dtplyr, tidyverse, R.utils, Rfast,
+p_load(data.table, dtplyr, tidyverse, R.utils, Rfast, knitr,
        lightgbm, keras, caret, pROC, knitr, conflicted)
 conflict_prefer('summarize', 'dplyr')
 conflict_prefer('summarise', 'dplyr')
 conflict_prefer('filter', 'dplyr')
 conflict_prefer('between', 'dplyr')
 conflict_prefer('auc', 'pROC')
-
-if(!is_keras_available()) install_keras()
 
 # Somehow, this seems to prevent memory leaks
 tensorflow::tf$compat$v1$disable_eager_execution()

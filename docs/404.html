@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Page not found | HarvardX 125.9x Project: Higgs dataset classification</title>
   <meta name="description" content="See also: _output.yml, _bookdown.yml" />
-  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Page not found | HarvardX 125.9x Project: Higgs dataset classification" />
   <meta property="og:type" content="book" />
@@ -20,10 +20,10 @@
   <meta name="twitter:description" content="See also: _output.yml, _bookdown.yml" />
   
 
-<meta name="author" content="Firstname Lastname" />
+<meta name="author" content="Yin-Chi Chan" />
 
 
-<meta name="date" content="2022-05-13" />
+<meta name="date" content="2022-09-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -176,18 +176,13 @@ div.csl-indent {
 <li class="chapter" data-level="2.4" data-path="data-analysis.html"><a href="data-analysis.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
 <li class="chapter" data-level="2.5" data-path="data-analysis.html"><a href="data-analysis.html#final-data-transformation"><i class="fa fa-check"></i><b>2.5</b> Final data transformation</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="lightgbm.html"><a href="lightgbm.html"><i class="fa fa-check"></i><b>3</b> <code>lightgbm</code></a>
+<li class="chapter" data-level="3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html"><i class="fa fa-check"></i><b>3</b> GPU-accelerated machine learning using Keras</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="lightgbm.html"><a href="lightgbm.html#lightgbm-model-with-optimized-drop-rate"><i class="fa fa-check"></i><b>3.1</b> <code>lightgbm</code> model with optimized drop rate</a></li>
-<li class="chapter" data-level="3.2" data-path="lightgbm.html"><a href="lightgbm.html#feature-importance"><i class="fa fa-check"></i><b>3.2</b> Feature importance</a></li>
+<li class="chapter" data-level="3.1" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate"><i class="fa fa-check"></i><b>3.1</b> Tuning the learning rate</a></li>
+<li class="chapter" data-level="3.2" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth"><i class="fa fa-check"></i><b>3.2</b> Effect of MLP depth and breadth</a></li>
+<li class="chapter" data-level="3.3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features"><i class="fa fa-check"></i><b>3.3</b> Dropping high-level features</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html"><i class="fa fa-check"></i><b>4</b> GPU-accelerated machine learning using Keras</a>
-<ul>
-<li class="chapter" data-level="4.1" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#tuning-the-learning-rate"><i class="fa fa-check"></i><b>4.1</b> Tuning the learning rate</a></li>
-<li class="chapter" data-level="4.2" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#effect-of-mlp-depth-and-breadth"><i class="fa fa-check"></i><b>4.2</b> Effect of MLP depth and breadth</a></li>
-<li class="chapter" data-level="4.3" data-path="gpu-accelerated-machine-learning-using-keras.html"><a href="gpu-accelerated-machine-learning-using-keras.html#dropping-high-level-features"><i class="fa fa-check"></i><b>4.3</b> Dropping high-level features</a></li>
-</ul></li>
-<li class="chapter" data-level="5" data-path="final-model-selection-and-validation.html"><a href="final-model-selection-and-validation.html"><i class="fa fa-check"></i><b>5</b> Final model selection and validation</a></li>
+<li class="chapter" data-level="4" data-path="final-model-selection-and-validation.html"><a href="final-model-selection-and-validation.html"><i class="fa fa-check"></i><b>4</b> Final model selection and validation</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/yinchi/harvardx-higgs" target="blank">Published with bookdown</a></li>
@@ -281,7 +276,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
         src = src.replace(/^https?:/, '');

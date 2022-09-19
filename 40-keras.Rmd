@@ -211,61 +211,32 @@ power.
 
 Since the high-level features in the HIGGS dataset are derived from the other, low-level features,
 it is clear that a good model should be able to learn the data without use of these features.
-The following code trains a 3x20484 NN on the HIGGS dataset once using all features and once
+The following code trains a 3x2048 NN on the HIGGS dataset once using all features and once
 just the low-level features:
 
-```{r train-keras, eval=FALSE, include=FALSE}
-
-train_keras <- function(x, y,
-                        depth, breadth,
-                        dropout = 0.5, learning_rate = 0.0002,
-                        epochs = 50) {
-  
-  model <- keras_model_sequential()
-  
-  # first hidden layer
-  model |>
-    layer_dense(units = breadth,
-                activation = 'relu',
-                input_shape = ncol(x)) |>
-    layer_dropout(rate = dropout)
-  
-  # subsequent hidden layers
-  if (depth > 1) {
-    for (layer in seq(2,depth)) {
-      model |>
-        layer_dense(units = breadth, activation = 'relu') |>
-        layer_dropout(rate = dropout)
-    }
-  }
-  
-  # output layer (logistic activation function for binary classification)
-  model |>
-    layer_dense(units = 1, activation = 'sigmoid')
-  
-  # compile model
-  model |>
-    keras::compile(
-      loss = 'binary_crossentropy',
-      optimizer = optimizer_adam(learning_rate = learning_rate),
-      metrics = metric_auc()
-    )
-  
-  # a larger batch size trains faster but uses more GPU memory
-  model |>
-    fit(x, y,
-        epochs = epochs, batch_size = 8192,
-        validation_split = 0.2)
-}
+```{r train-keras}
 
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results3.RDdata')) {
-  model_full <- train_keras(x, y, 3, 2048, learning_rate = 2e-4)
-  model_low_only <- train_keras(x[,1:21], y, 3, 2048, learning_rate = 2e-4)
-  save(history4, history5, file='cache/nn_results3.RDdata')
+  auc_low_only <- train_keras_auc(x[,1:21], y, 3, 2048, learning_rate = 2e-4)
+  save(auc_low_only, file='cache/nn_results3.RDdata')
 }
 load('cache/nn_results3.RDdata')
 tensorflow::set_random_seed(42, disable_gpu = F)
 ```
 
-The following code computes and prints the AUC for the both models:
+The following code displays the AUC for the both models:
+```{r auc-all-vs-low}
+tibble(
+  Features = c('All', 'Low-level only'),
+  AUC = c(
+    nn_results |> filter(breadth == 2048 & depth == 3) |> pull(auc),
+    auc_low_only
+  )
+) |> kable(align = 'lr', booktabs = T, linesep = '')
+```
+
+The AUC for the low-level-only NN is only slightly lower than that for
+the full network, demonstrating that the NN is able to learn the complex
+non-linear relationships between the independent and dependent
+variables on it its own without the need for additional derived variables.
