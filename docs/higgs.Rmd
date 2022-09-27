@@ -160,7 +160,8 @@ gc()
 
 ## Optimization metric
 
-We will optimize the area under the receiver operating curve (AUC) of our models.  The AUC
+We will build a classification model for the HIGGS dataset,
+optimizing the area under the receiver operating curve (AUC).  The AUC
 is defined such that a perfect classifer has an AUC of 1 and a random classifier has an AUC of 0.5.
 An advantage of using the AUC is that it reflects the trade-off between the true and false positive
 rates of a model depending on the chosen classification threshold.
@@ -453,7 +454,8 @@ train_keras_history <- function(x, y, depth, breadth,
     )
   
   # a larger batch size trains faster but uses more GPU memory
-  history <- model |> fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  history <- model |>
+    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
   rm(model)
   gc()
@@ -550,7 +552,8 @@ train_keras_auc <- function(x, y,
     )
   
   # a larger batch size trains faster but uses more GPU memory
-  history <- model |> fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  history <- model |>
+    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   ypred <- model |> predict(x, batch_size = 8192) |> as.vector()
   auc <- roc(y,ypred) |> auc() |> as.numeric()
   
@@ -699,25 +702,25 @@ yPred <- finalModel$predict(xFinalTest) |> drop() # drop length-1 dimensions
 auc(roc(yFinalTest,yPred))
 ```
 
-
 <!--chapter:end:80-validation.Rmd-->
 
 # Conclusion
 
 We examined the HIGGS dataset, containing 11 million simulated particle collision events and
-28 explanatory variables (21 low-level variable and  7 dervived or high-level variables).  The
+28 explanatory variables (21 low-level variables and  7 derived or high-level variables).  The
 goal is to predict for each event whether a Higgs boson was generated.  A neural network was
 created using Keras, with hyperparameter tuning for the learning rate and NN size.  It was found
-that additional hidden layers beyond three did not significantly improve prediction ability.
+that additional hidden layers beyond three did not significantly improve classification ability.
 The final NN was generated with three hidden layers of 2048 nodes each, generating a final area
 under the ROC curve of **`r round(as.numeric(auc(roc(yFinalTest,yPred))), 3)`**.
 
-The choice of neural networks for prediction, using Keras, was motivated by the large size of the
+The choice of neural networks for the classification model, using Keras, was motivated by the large
+size of the
 HIGGS dataset.  Nevertheless, working with the prediction model required careful memory management
 and occasionally restarting the entire R session and/or RStudio.
 
 Another possible approach for the HIGGS dataset is boosted trees, where each added tree attempts to
-predict the remaining error after all previous trees are applied.  R libraries include XGBoost and
+model the remaining error after all previous trees are applied.  R libraries include XGBoost and
 lightGBM, however, lightGBM requires manual installation while the pre-built R package for XGBoost
 with GPU support is marked as experimental
 (<https://xgboost.readthedocs.io/en/stable/install.html#r>).

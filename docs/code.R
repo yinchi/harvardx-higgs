@@ -282,7 +282,8 @@ train_keras_history <- function(x, y, depth, breadth,
     )
   
   # a larger batch size trains faster but uses more GPU memory
-  history <- model |> fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  history <- model |>
+    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
   rm(model)
   gc()
@@ -366,7 +367,8 @@ train_keras_auc <- function(x, y,
     )
   
   # a larger batch size trains faster but uses more GPU memory
-  history <- model |> fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  history <- model |>
+    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   ypred <- model |> predict(x, batch_size = 8192) |> as.vector()
   auc <- roc(y,ypred) |> auc() |> as.numeric()
   

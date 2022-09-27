@@ -87,7 +87,8 @@ gc()
 
 ## Optimization metric
 
-We will optimize the area under the receiver operating curve (AUC) of our models.  The AUC
+We will build a classification model for the HIGGS dataset,
+optimizing the area under the receiver operating curve (AUC).  The AUC
 is defined such that a perfect classifer has an AUC of 1 and a random classifier has an AUC of 0.5.
 An advantage of using the AUC is that it reflects the trade-off between the true and false positive
 rates of a model depending on the chosen classification threshold.

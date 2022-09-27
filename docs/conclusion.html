@@ -208,17 +208,18 @@ div.csl-indent {
 <div id="conclusion" class="section level1 hasAnchor" number="5">
 <h1><span class="header-section-number">Chapter 5</span> Conclusion<a href="conclusion.html#conclusion" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>We examined the HIGGS dataset, containing 11 million simulated particle collision events and
-28 explanatory variables (21 low-level variable and 7 dervived or high-level variables). The
+28 explanatory variables (21 low-level variables and 7 derived or high-level variables). The
 goal is to predict for each event whether a Higgs boson was generated. A neural network was
 created using Keras, with hyperparameter tuning for the learning rate and NN size. It was found
-that additional hidden layers beyond three did not significantly improve prediction ability.
+that additional hidden layers beyond three did not significantly improve classification ability.
 The final NN was generated with three hidden layers of 2048 nodes each, generating a final area
 under the ROC curve of <strong>0.877</strong>.</p>
-<p>The choice of neural networks for prediction, using Keras, was motivated by the large size of the
+<p>The choice of neural networks for the classification model, using Keras, was motivated by the large
+size of the
 HIGGS dataset. Nevertheless, working with the prediction model required careful memory management
 and occasionally restarting the entire R session and/or RStudio.</p>
 <p>Another possible approach for the HIGGS dataset is boosted trees, where each added tree attempts to
-predict the remaining error after all previous trees are applied. R libraries include XGBoost and
+model the remaining error after all previous trees are applied. R libraries include XGBoost and
 lightGBM, however, lightGBM requires manual installation while the pre-built R package for XGBoost
 with GPU support is marked as experimental
 (<a href="https://xgboost.readthedocs.io/en/stable/install.html#r" class="uri">https://xgboost.readthedocs.io/en/stable/install.html#r</a>).
