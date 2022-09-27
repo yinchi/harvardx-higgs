@@ -23,6 +23,7 @@ Code chunks are typeset in
 ## R setup
 
 ```{r Setup, include=FALSE, purl=FALSE}
+
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -57,7 +58,7 @@ if(!require("keras")) {
 
 library(pacman)
 p_load(data.table, dtplyr, tidyverse, R.utils, Rfast, knitr,
-       lightgbm, keras, caret, pROC, knitr, conflicted)
+       keras, caret, pROC, knitr, conflicted)
 conflict_prefer('summarize', 'dplyr')
 conflict_prefer('summarise', 'dplyr')
 conflict_prefer('filter', 'dplyr')
@@ -87,6 +88,7 @@ The HIGGS dataset is available from the UCI Machine Learning Repository.
 The following code loads the dataset, downloading and unzipping the CSV file as necessary:
 
 ```{r Download-data, results='hide'}
+
 options(timeout=1800) # Give more time for the download to complete
 if(!dir.exists('data_raw')) {
   dir.create('data_raw')
@@ -115,8 +117,8 @@ colnames(higgs_all) <- c('signal',
                      'm_bb', 'm_wbb', 'm_wwbb')
 
 # Separate input and output columns
-xAll <- higgs_all %>% select(-signal) %>% as.data.table()
-yAll <- higgs_all %>% select(signal) %>% as.data.table()
+xAll <- higgs_all |> select(-signal) |> as.data.table()
+yAll <- higgs_all |> select(signal) |> as.data.table()
 rm(higgs_all)
 ```
 
@@ -166,7 +168,7 @@ We will use the `pROC` package to create and plot ROC curves, and to compute the
 
 <!--chapter:end:10-intro.Rmd-->
 
-# Data analysis
+# Data analysis and transformation
 
 In this section, we analyze the various input features of the HIGGS dataset and apply
 deskewing and $z$-score normalization.
@@ -287,6 +289,7 @@ Mean = x |>
   kable(align = 'lrr', booktabs = T, linesep = '')
 ```
 
+Nevertheless, we will leave these features alone.
 
 ## High-level features
 
@@ -346,7 +349,7 @@ tibble(
 ## Final data transformation
 
 The following code applies log transformation to selected columns of the HIGGS
-training dataset. We will also convert our
+training and test datasets. We will also convert our
 data types into matrices here for input into subsequent stages of our analysis:
 
 ```{r Log-transform, results='hide'}
@@ -360,6 +363,18 @@ x <- x |>
 
 # Convert to matrices
 x <- x %>% as.matrix()
+
+# Apply log transform
+xFinalTest <- xFinalTest |>
+  mutate(across(
+    c(contains('m_'), contains('_pT'), contains('_mag')),
+    log)) |>
+  as.data.table()
+
+# Convert to matrices
+x <- x %>% as.matrix()
+xFinalTest <- xFinalTest %>% as.matrix()
+
 gc()
 ```
 
@@ -370,7 +385,9 @@ standard deviation:
 
 m <- colMeans(x)
 sd <- colVars(x, std = T) # std=T -> compute st. dev. instead of variance
+
 x <- scale(x, center = m, scale = sd)
+xFinalTest <- scale(xFinalTest, center = m, scale = sd)
 ```
 
 Finally, we extract the target values to a vector:
@@ -378,12 +395,13 @@ Finally, we extract the target values to a vector:
 ```{r Extract-signal}
 
 y <- y$signal
+yFinalTest <- yFinalTest$signal
 ```
 
 
 <!--chapter:end:20-data-analysis.Rmd-->
 
-# GPU-accelerated machine learning using Keras
+# GPU-accelerated machine learning using Keras {#keras}
 
 We will use the `keras` package for machine learning.   The `keras` package allows us
 to model the data using neural networks (NN); in this case, we will use a straightforward
@@ -435,8 +453,7 @@ train_keras_history <- function(x, y, depth, breadth,
     )
   
   # a larger batch size trains faster but uses more GPU memory
-  history <- model |>
-    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  history <- model |> fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
   rm(model)
   gc()
@@ -448,6 +465,7 @@ train_keras_history <- function(x, y, depth, breadth,
 ```
 
 ```{r Keras-learning-rate-effect, results='hide'}
+
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results.RDdata')) {
   history1 <- train_keras_history(x, y, 3, 256, learning_rate = 1e-3)
@@ -459,7 +477,8 @@ load('cache/nn_results.RDdata')
 tensorflow::set_random_seed(42, disable_gpu = F)
 ```
 
-```{r fig.height=3, fig.width=5}
+```{r Keras-learning-rate-plot, fig.height=3, fig.width=5}
+
 tibble(
   epoch = seq(50),
   `1e-3` = history1$metrics$val_loss,
@@ -485,7 +504,7 @@ we will use a training rate of $2\times10^{-4}$ for all subsequent modelling.
 The following function trains an MLP with the specified
 number of hidden layers (`depth`) and nodes per hidden layer (`breadth`),
 and returns the model and training history.
-We will use the Adam[@Kingma2014] optimizer with a learning rate of $2\times 10^{-4}$ and 50 epochs.
+We will use the Adam [@Kingma2014] optimizer with a learning rate of $2\times 10^{-4}$ and 50 epochs.
 
 ```{r Keras-tuning-function}
 
@@ -506,9 +525,7 @@ train_keras_auc <- function(x, y,
   
   # first hidden layer
   model |>
-    layer_dense(units = breadth,
-                activation = 'relu',
-                input_shape = ncol(x)) |>
+    layer_dense(units = breadth, activation = 'relu', input_shape = ncol(x)) |>
     layer_dropout(rate = dropout)
   
   # subsequent hidden layers
@@ -533,11 +550,7 @@ train_keras_auc <- function(x, y,
     )
   
   # a larger batch size trains faster but uses more GPU memory
-  history <- model |>
-    fit(x, y,
-        epochs = epochs, batch_size = 8192,
-        validation_split = 0.2)
-  
+  history <- model |> fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   ypred <- model |> predict(x, batch_size = 8192) |> as.vector()
   auc <- roc(y,ypred) |> auc() |> as.numeric()
   
@@ -563,9 +576,7 @@ if (!file.exists('cache/nn_results2.RDdata')) {
   for(l in 1:5) { # depth: number of hidden layers
     for (n in 2^c(5:11)) { # breadth: hidden nodes per layer
       nn_results <- nn_results |>
-        add_row(depth = l,
-                breadth = n,
-                auc = train_keras_auc(x, y, l, n))
+        add_row(depth = l, breadth = n, auc = train_keras_auc(x, y, l, n))
     }
   }
   save(nn_results, file = 'cache/nn_results2.RDdata')
@@ -599,7 +610,7 @@ it is clear that a good model should be able to learn the data without use of th
 The following code trains a 3x2048 NN on the HIGGS dataset once using all features and once
 just the low-level features:
 
-```{r train-keras}
+```{r Train-low-features-only}
 
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results3.RDdata')) {
@@ -611,7 +622,8 @@ tensorflow::set_random_seed(42, disable_gpu = F)
 ```
 
 The following code displays the AUC for the both models:
-```{r auc-all-vs-low}
+```{r AUC-all-vs-low}
+
 tibble(
   Features = c('All', 'Low-level only'),
   AUC = c(
@@ -630,7 +642,91 @@ variables on it its own without the need for additional derived variables.
 
 # Final model selection and validation
 
+Based on the results in Section \@ref(keras), we will use a 3x2048 NN for our final model,
+using all available input features.
+
+```{r Train-final-model}
+
+train_keras_model <- function(x, y, depth, breadth,
+                        dropout = 0.5, learning_rate=0.0002, epochs = 50,
+                        filename) {
+  model <- keras_model_sequential(input_shape = ncol(x))
+  
+  # hidden layers
+  for (layer in seq(depth)) {
+    model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
+  }
+  
+  # output layer (logistic activation function for binary classification)
+  model |> layer_dense(1, 'sigmoid')
+  
+  # compile model
+  model |>
+    keras::compile(
+      loss = 'binary_crossentropy',
+      optimizer = optimizer_adam(learning_rate = learning_rate),
+      metrics = metric_auc()
+    )
+  
+  # a larger batch size trains faster but uses more GPU memory
+  history <- model |>
+    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  
+  # need to save model BEFORE clean-up below
+  save_model_hdf5(model, filename, include_optimizer = F)
+  
+  rm(model)
+  gc()
+  k_clear_session()
+  tensorflow::tf$compat$v1$reset_default_graph()
+}
+
+tensorflow::set_random_seed(42, disable_gpu = F)
+if (!file.exists('cache/final_nn.hdf5')) {
+  train_keras_model(
+    x, y, 3, 2048, learning_rate = 2e-4, filename = 'cache/final_nn.hdf5'
+  )
+}
+finalModel <- load_model_hdf5('cache/final_nn.hdf5')
+tensorflow::set_random_seed(42, disable_gpu = F)
+```
+
+The AUC of the ROC curve for the final test set is:
+
+```{r Final-auc}
+
+yPred <- finalModel$predict(xFinalTest) |> drop() # drop length-1 dimensions
+auc(roc(yFinalTest,yPred))
+```
+
+
 <!--chapter:end:80-validation.Rmd-->
+
+# Conclusion
+
+We examined the HIGGS dataset, containing 11 million simulated particle collision events and
+28 explanatory variables (21 low-level variable and  7 dervived or high-level variables).  The
+goal is to predict for each event whether a Higgs boson was generated.  A neural network was
+created using Keras, with hyperparameter tuning for the learning rate and NN size.  It was found
+that additional hidden layers beyond three did not significantly improve prediction ability.
+The final NN was generated with three hidden layers of 2048 nodes each, generating a final area
+under the ROC curve of **`r round(as.numeric(auc(roc(yFinalTest,yPred))), 3)`**.
+
+The choice of neural networks for prediction, using Keras, was motivated by the large size of the
+HIGGS dataset.  Nevertheless, working with the prediction model required careful memory management
+and occasionally restarting the entire R session and/or RStudio.
+
+Another possible approach for the HIGGS dataset is boosted trees, where each added tree attempts to
+predict the remaining error after all previous trees are applied.  R libraries include XGBoost and
+lightGBM, however, lightGBM requires manual installation while the pre-built R package for XGBoost
+with GPU support is marked as experimental
+(<https://xgboost.readthedocs.io/en/stable/install.html#r>).
+In contrast, Keras is easy to install, thanks to the command
+`keras::install_keras()` from within R itself, which also prepares the necessary Python environment
+containing Tensorflow and all other Keras dependencies.  Thus, only CUDA and CUDNN need to be
+installed separately.
+
+<!--chapter:end:90-conclusion.Rmd-->
 
 # References {-}
 

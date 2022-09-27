@@ -1,1 +1,58 @@
 # Final model selection and validation
+
+Based on the results in Section \@ref(keras), we will use a 3x2048 NN for our final model,
+using all available input features.
+
+```{r Train-final-model}
+
+train_keras_model <- function(x, y, depth, breadth,
+                        dropout = 0.5, learning_rate=0.0002, epochs = 50,
+                        filename) {
+  model <- keras_model_sequential(input_shape = ncol(x))
+  
+  # hidden layers
+  for (layer in seq(depth)) {
+    model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
+  }
+  
+  # output layer (logistic activation function for binary classification)
+  model |> layer_dense(1, 'sigmoid')
+  
+  # compile model
+  model |>
+    keras::compile(
+      loss = 'binary_crossentropy',
+      optimizer = optimizer_adam(learning_rate = learning_rate),
+      metrics = metric_auc()
+    )
+  
+  # a larger batch size trains faster but uses more GPU memory
+  history <- model |>
+    fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
+  
+  # need to save model BEFORE clean-up below
+  save_model_hdf5(model, filename, include_optimizer = F)
+  
+  rm(model)
+  gc()
+  k_clear_session()
+  tensorflow::tf$compat$v1$reset_default_graph()
+}
+
+tensorflow::set_random_seed(42, disable_gpu = F)
+if (!file.exists('cache/final_nn.hdf5')) {
+  train_keras_model(
+    x, y, 3, 2048, learning_rate = 2e-4, filename = 'cache/final_nn.hdf5'
+  )
+}
+finalModel <- load_model_hdf5('cache/final_nn.hdf5')
+tensorflow::set_random_seed(42, disable_gpu = F)
+```
+
+The AUC of the ROC curve for the final test set is:
+
+```{r Final-auc}
+
+yPred <- finalModel$predict(xFinalTest) |> drop() # drop length-1 dimensions
+auc(roc(yFinalTest,yPred))
+```

@@ -15,6 +15,7 @@ The HIGGS dataset is available from the UCI Machine Learning Repository.
 The following code loads the dataset, downloading and unzipping the CSV file as necessary:
 
 ```{r Download-data, results='hide'}
+
 options(timeout=1800) # Give more time for the download to complete
 if(!dir.exists('data_raw')) {
   dir.create('data_raw')
@@ -43,8 +44,8 @@ colnames(higgs_all) <- c('signal',
                      'm_bb', 'm_wbb', 'm_wwbb')
 
 # Separate input and output columns
-xAll <- higgs_all %>% select(-signal) %>% as.data.table()
-yAll <- higgs_all %>% select(signal) %>% as.data.table()
+xAll <- higgs_all |> select(-signal) |> as.data.table()
+yAll <- higgs_all |> select(signal) |> as.data.table()
 rm(higgs_all)
 ```
 

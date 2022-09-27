@@ -1,0 +1,23 @@
+# Conclusion
+
+We examined the HIGGS dataset, containing 11 million simulated particle collision events and
+28 explanatory variables (21 low-level variable and  7 dervived or high-level variables).  The
+goal is to predict for each event whether a Higgs boson was generated.  A neural network was
+created using Keras, with hyperparameter tuning for the learning rate and NN size.  It was found
+that additional hidden layers beyond three did not significantly improve prediction ability.
+The final NN was generated with three hidden layers of 2048 nodes each, generating a final area
+under the ROC curve of **`r round(as.numeric(auc(roc(yFinalTest,yPred))), 3)`**.
+
+The choice of neural networks for prediction, using Keras, was motivated by the large size of the
+HIGGS dataset.  Nevertheless, working with the prediction model required careful memory management
+and occasionally restarting the entire R session and/or RStudio.
+
+Another possible approach for the HIGGS dataset is boosted trees, where each added tree attempts to
+predict the remaining error after all previous trees are applied.  R libraries include XGBoost and
+lightGBM, however, lightGBM requires manual installation while the pre-built R package for XGBoost
+with GPU support is marked as experimental
+(<https://xgboost.readthedocs.io/en/stable/install.html#r>).
+In contrast, Keras is easy to install, thanks to the command
+`keras::install_keras()` from within R itself, which also prepares the necessary Python environment
+containing Tensorflow and all other Keras dependencies.  Thus, only CUDA and CUDNN need to be
+installed separately.

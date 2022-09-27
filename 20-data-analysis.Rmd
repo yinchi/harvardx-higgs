@@ -1,4 +1,4 @@
-# Data analysis
+# Data analysis and transformation
 
 In this section, we analyze the various input features of the HIGGS dataset and apply
 deskewing and $z$-score normalization.
@@ -119,6 +119,7 @@ Mean = x |>
   kable(align = 'lrr', booktabs = T, linesep = '')
 ```
 
+Nevertheless, we will leave these features alone.
 
 ## High-level features
 
@@ -178,7 +179,7 @@ tibble(
 ## Final data transformation
 
 The following code applies log transformation to selected columns of the HIGGS
-training dataset. We will also convert our
+training and test datasets. We will also convert our
 data types into matrices here for input into subsequent stages of our analysis:
 
 ```{r Log-transform, results='hide'}
@@ -192,6 +193,18 @@ x <- x |>
 
 # Convert to matrices
 x <- x %>% as.matrix()
+
+# Apply log transform
+xFinalTest <- xFinalTest |>
+  mutate(across(
+    c(contains('m_'), contains('_pT'), contains('_mag')),
+    log)) |>
+  as.data.table()
+
+# Convert to matrices
+x <- x %>% as.matrix()
+xFinalTest <- xFinalTest %>% as.matrix()
+
 gc()
 ```
 
@@ -202,7 +215,9 @@ standard deviation:
 
 m <- colMeans(x)
 sd <- colVars(x, std = T) # std=T -> compute st. dev. instead of variance
+
 x <- scale(x, center = m, scale = sd)
+xFinalTest <- scale(xFinalTest, center = m, scale = sd)
 ```
 
 Finally, we extract the target values to a vector:
@@ -210,5 +225,6 @@ Finally, we extract the target values to a vector:
 ```{r Extract-signal}
 
 y <- y$signal
+yFinalTest <- yFinalTest$signal
 ```
 

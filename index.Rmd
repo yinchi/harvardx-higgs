@@ -23,6 +23,7 @@ Code chunks are typeset in
 ## R setup
 
 ```{r Setup, include=FALSE, purl=FALSE}
+
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
@@ -57,7 +58,7 @@ if(!require("keras")) {
 
 library(pacman)
 p_load(data.table, dtplyr, tidyverse, R.utils, Rfast, knitr,
-       lightgbm, keras, caret, pROC, knitr, conflicted)
+       keras, caret, pROC, knitr, conflicted)
 conflict_prefer('summarize', 'dplyr')
 conflict_prefer('summarise', 'dplyr')
 conflict_prefer('filter', 'dplyr')
