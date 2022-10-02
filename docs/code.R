@@ -6,7 +6,11 @@ if (packageVersion('base') < '4.1.0') {
   stop('This code requires R >= 4.1.0!')
 }
 
+# Package manager
 if(!require("pacman")) install.packages("pacman")
+
+# Keras - deep learning package.  You may need to restart R after installation
+# before proceeding with the rest of the code in this project.
 if(!require("keras")) {
   install.packages("keras")
   keras::install_keras()
@@ -15,6 +19,9 @@ if(!require("keras")) {
 library(pacman)
 p_load(data.table, dtplyr, tidyverse, R.utils, Rfast, knitr,
        keras, caret, pROC, knitr, conflicted)
+
+# The `conflicted` package will throw an error if a function name is ambiguous, unless
+# A preferred package is given below.
 conflict_prefer('summarize', 'dplyr')
 conflict_prefer('summarise', 'dplyr')
 conflict_prefer('filter', 'dplyr')
@@ -28,6 +35,8 @@ tensorflow::tf$compat$v1$disable_eager_execution()
 ## ----Download-data, results='hide'-------------------------------------------------------------------------------------------------------------------------------------------
 
 options(timeout=1800) # Give more time for the download to complete
+
+# Download and unzip the data file if needed
 if(!dir.exists('data_raw')) {
   dir.create('data_raw')
 }
@@ -37,6 +46,7 @@ if(!file.exists('data_raw/HIGGS.csv')) {
     'data_raw/HIGGS.csv.gz')
   gunzip('data_raw/HIGGS.csv.gz')
 }
+
 
 ## ----Load-Data---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,6 +67,7 @@ colnames(higgs_all) <- c('signal',
 # Separate input and output columns
 xAll <- higgs_all |> select(-signal) |> as.data.table()
 yAll <- higgs_all |> select(signal) |> as.data.table()
+
 rm(higgs_all)
 
 
@@ -71,6 +82,8 @@ x <- xAll[-idx,]
 y <- yAll[-idx,]
 xFinalTest <- x[idx,]
 yFinalTest <- y[idx,]
+
+# Clean-up
 rm(xAll, yAll)
 gc()
 
@@ -215,21 +228,23 @@ tibble(
 
 ## ----Log-transform, results='hide'-------------------------------------------------------------------------------------------------------------------------------------------
 
-# Apply log transform
+# Apply log transforms
 x <- x |>
-  mutate(across(
-    c(contains('m_'), contains('_pT'), contains('_mag')),
-    log)) |>
+  mutate(
+    across(
+      c(contains('m_'), contains('_pT'), contains('_mag')),
+      log
+    )
+  ) |>
   as.data.table()
 
-# Convert to matrices
-x <- x %>% as.matrix()
-
-# Apply log transform
 xFinalTest <- xFinalTest |>
-  mutate(across(
-    c(contains('m_'), contains('_pT'), contains('_mag')),
-    log)) |>
+  mutate(
+    across(
+      c(contains('m_'), contains('_pT'), contains('_mag')),
+      log
+    )
+  ) |>
   as.data.table()
 
 # Convert to matrices
@@ -258,22 +273,17 @@ yFinalTest <- yFinalTest$signal
 
 train_keras_history <- function(x, y, depth, breadth,
                         dropout = 0.5, learning_rate=0.0002, epochs = 50) {
-  model <- keras_model_sequential()
-  model |>
-    layer_dense(breadth, 'relu', input_shape = ncol(x)) |>
-    layer_dropout(rate = dropout)
+  model <- keras_model_sequential(input_shape = ncol(x))
   
-  # subsequent hidden layers
-  if (depth > 1) {
-    for (layer in seq(2,depth)) {
-      model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
-    }
+  # Hidden layers
+  for (layer in seq(depth)) {
+    model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
   }
   
-  # output layer (logistic activation function for binary classification)
+  # Output layer (logistic activation function for binary classification)
   model |> layer_dense(1, 'sigmoid')
   
-  # compile model
+  # Compile model
   model |>
     keras::compile(
       loss = 'binary_crossentropy',
@@ -281,10 +291,11 @@ train_keras_history <- function(x, y, depth, breadth,
       metrics = metric_auc()
     )
   
-  # a larger batch size trains faster but uses more GPU memory
+  # A larger batch size trains faster but uses more GPU memory
   history <- model |>
     fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
+  # Clean-up
   rm(model)
   gc()
   k_clear_session()
@@ -296,6 +307,7 @@ train_keras_history <- function(x, y, depth, breadth,
 
 ## ----Keras-learning-rate-effect, results='hide'------------------------------------------------------------------------------------------------------------------------------
 
+# Train a 3x256 NN with three different learning rates
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results.RDdata')) {
   history1 <- train_keras_history(x, y, 3, 256, learning_rate = 1e-3)
@@ -309,13 +321,15 @@ tensorflow::set_random_seed(42, disable_gpu = F)
 
 ## ----Keras-learning-rate-plot, fig.height=3, fig.width=5---------------------------------------------------------------------------------------------------------------------
 
+# Plot metric over the number of epochs
 tibble(
   epoch = seq(50),
   `1e-3` = history1$metrics$val_loss,
   `5e-4` = history2$metrics$val_loss,
-  `2e-4` = history3$metrics$val_loss) |>
+  `2e-4` = history3$metrics$val_loss
+) |>
   pivot_longer(-epoch,'lr',values_to = 'loss') |>
-  mutate(lr = as.numeric(lr)) |> 
+  mutate(lr = as.numeric(lr)) |>
   ggplot(aes(epoch,loss, color=as.factor(lr))) +
   geom_line() +
   xlab('Epochs') +
@@ -333,32 +347,23 @@ train_keras_auc <- function(x, y,
                         epochs = 50) {
   cat('DNN: ', depth, 'x', breadth, '\n')
   
-  model <- keras_model_sequential()
+  model <- keras_model_sequential(input_shape = ncol(x))
   
   # By default, Keras applies Glorot uniform initialization for weights
   # and zero initialization for biases. Glorot uniform initialization
   # samples weights from Uniform(-sqrt(6/n),sqrt(6/n)) where n is the
   # sum of in and out nodes between two input/hidden/output layers.
   
-  # first hidden layer
-  model |>
-    layer_dense(units = breadth, activation = 'relu', input_shape = ncol(x)) |>
-    layer_dropout(rate = dropout)
-  
-  # subsequent hidden layers
-  if (depth > 1) {
-    for (layer in seq(2,depth)) {
-      model |>
-        layer_dense(units = breadth, activation = 'relu') |>
-        layer_dropout(rate = dropout)
-    }
+  # Hidden layers
+  for (layer in seq(depth)) {
+    model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
   }
   
-  # output layer (logistic activation function for binary classification)
+  # Output layer (logistic activation function for binary classification)
   model |>
     layer_dense(units = 1, activation = 'sigmoid')
   
-  # compile model
+  # Compile model
   model |>
     keras::compile(
       loss = 'binary_crossentropy',
@@ -366,7 +371,7 @@ train_keras_auc <- function(x, y,
       metrics = metric_auc()
     )
   
-  # a larger batch size trains faster but uses more GPU memory
+  # A larger batch size trains faster but uses more GPU memory
   history <- model |>
     fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   ypred <- model |> predict(x, batch_size = 8192) |> as.vector()
@@ -402,7 +407,7 @@ tensorflow::set_random_seed(42, disable_gpu = F)
 
 ## ----Keras-tuning-plot, fig.height=3.5, fig.width=4.5------------------------------------------------------------------------------------------------------------------------
 
-# heatmap of AUC vs depth and breadth
+# Heatmap of AUC vs depth and breadth
 nn_results |> ggplot(aes(as.factor(depth), as.factor(breadth), fill = auc)) +
   geom_tile() +
   geom_text(aes(label = round(auc,4)), color = "black", size = 3) +
@@ -413,6 +418,7 @@ nn_results |> ggplot(aes(as.factor(depth), as.factor(breadth), fill = auc)) +
 
 ## ----Train-low-features-only-------------------------------------------------------------------------------------------------------------------------------------------------
 
+# Train 3x2048 NN using low-level features only.  Cache the AUC value.
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results3.RDdata')) {
   auc_low_only <- train_keras_auc(x[,1:21], y, 3, 2048, learning_rate = 2e-4)
@@ -440,15 +446,15 @@ train_keras_model <- function(x, y, depth, breadth,
                         filename) {
   model <- keras_model_sequential(input_shape = ncol(x))
   
-  # hidden layers
+  # Hidden layers
   for (layer in seq(depth)) {
     model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
   }
   
-  # output layer (logistic activation function for binary classification)
+  # Output layer (logistic activation function for binary classification)
   model |> layer_dense(1, 'sigmoid')
   
-  # compile model
+  # Compile model
   model |>
     keras::compile(
       loss = 'binary_crossentropy',
@@ -456,19 +462,20 @@ train_keras_model <- function(x, y, depth, breadth,
       metrics = metric_auc()
     )
   
-  # a larger batch size trains faster but uses more GPU memory
+  # A larger batch size trains faster but uses more GPU memory
   history <- model |>
     fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
-  # need to save model BEFORE clean-up below
+  # Need to save model BEFORE clean-up below
   save_model_hdf5(model, filename, include_optimizer = F)
   
   rm(model)
   gc()
   k_clear_session()
   tensorflow::tf$compat$v1$reset_default_graph()
-}
+} # end fn
 
+# Train the final model and save to file, or load from file if it exists
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/final_nn.hdf5')) {
   train_keras_model(

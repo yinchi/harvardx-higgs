@@ -3,10 +3,10 @@
 In this section, we analyze the various input features of the HIGGS dataset and apply
 deskewing and $z$-score normalization.
 
-## Low-level momentum features
+## Momentum features
 
 The input features containing `_pT`  are related to transverse (perpendicular to the input beams)
-momentum, as is the high-level feature `missing_E_mag`.  Histograms of these features
+momentum, as is `missing_E_mag`.  Histograms of these features
 are plotted as follows:
 
 ```{r Hist-momentum-features, fig.height=3.5, fig.width=7}
@@ -63,7 +63,7 @@ tibble(
 ## Angular features
 
 The features containing `_eta` or `_phi` describe angular data of the detected products
-of the simulated collision processes. Histograms for these features are as follows:
+of the simulated collision processes, in radians. Histograms for these features are as follows:
 
 ```{r Hist-angular-features, fig.height=5, fig.width=6}
 
@@ -138,6 +138,8 @@ x |>
   ggtitle('High-level features')
 ```
 
+Therefore, we will apply a log transformation to this data:
+
 ```{r Hist-high-level-features-log, fig.height=5, fig.width=7}
 
 x |>
@@ -184,21 +186,23 @@ data types into matrices here for input into subsequent stages of our analysis:
 
 ```{r Log-transform, results='hide'}
 
-# Apply log transform
+# Apply log transforms
 x <- x |>
-  mutate(across(
-    c(contains('m_'), contains('_pT'), contains('_mag')),
-    log)) |>
+  mutate(
+    across(
+      c(contains('m_'), contains('_pT'), contains('_mag')),
+      log
+    )
+  ) |>
   as.data.table()
 
-# Convert to matrices
-x <- x %>% as.matrix()
-
-# Apply log transform
 xFinalTest <- xFinalTest |>
-  mutate(across(
-    c(contains('m_'), contains('_pT'), contains('_mag')),
-    log)) |>
+  mutate(
+    across(
+      c(contains('m_'), contains('_pT'), contains('_mag')),
+      log
+    )
+  ) |>
   as.data.table()
 
 # Convert to matrices
@@ -208,7 +212,7 @@ xFinalTest <- xFinalTest %>% as.matrix()
 gc()
 ```
 
-The following code then scales the training data to have zero mean and unit
+The following code then scales the training and final validation data to have zero mean and unit
 standard deviation:
 
 ```{r Mean-SD-scaling}

@@ -23,7 +23,7 @@
 <meta name="author" content="Yin-Chi Chan" />
 
 
-<meta name="date" content="2022-09-27" />
+<meta name="date" content="2022-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,7 +170,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html"><i class="fa fa-check"></i><b>2</b> Data analysis and transformation</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#low-level-momentum-features"><i class="fa fa-check"></i><b>2.1</b> Low-level momentum features</a></li>
+<li class="chapter" data-level="2.1" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#momentum-features"><i class="fa fa-check"></i><b>2.1</b> Momentum features</a></li>
 <li class="chapter" data-level="2.2" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#angular-features"><i class="fa fa-check"></i><b>2.2</b> Angular features</a></li>
 <li class="chapter" data-level="2.3" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#b-tag-features"><i class="fa fa-check"></i><b>2.3</b> <span class="math inline">\(b\)</span>-tag features</a></li>
 <li class="chapter" data-level="2.4" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
@@ -219,15 +219,17 @@ dataset as follows.</p>
 <p>The HIGGS dataset is available from the UCI Machine Learning Repository.
 The following code loads the dataset, downloading and unzipping the CSV file as necessary:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="introduction.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout=</span><span class="dv">1800</span>) <span class="co"># Give more time for the download to complete</span></span>
-<span id="cb2-2"><a href="introduction.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;data_raw&#39;</span>)) {</span>
-<span id="cb2-3"><a href="introduction.html#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="st">&#39;data_raw&#39;</span>)</span>
-<span id="cb2-4"><a href="introduction.html#cb2-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-5"><a href="introduction.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;data_raw/HIGGS.csv&#39;</span>)) {</span>
-<span id="cb2-6"><a href="introduction.html#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download.file</span>(</span>
-<span id="cb2-7"><a href="introduction.html#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;https://archive.ics.uci.edu/ml/machine-learning-databases/00280/HIGGS.csv.gz&#39;</span>,</span>
-<span id="cb2-8"><a href="introduction.html#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;data_raw/HIGGS.csv.gz&#39;</span>)</span>
-<span id="cb2-9"><a href="introduction.html#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gunzip</span>(<span class="st">&#39;data_raw/HIGGS.csv.gz&#39;</span>)</span>
-<span id="cb2-10"><a href="introduction.html#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb2-2"><a href="introduction.html#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="introduction.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Download and unzip the data file if needed</span></span>
+<span id="cb2-4"><a href="introduction.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;data_raw&#39;</span>)) {</span>
+<span id="cb2-5"><a href="introduction.html#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="st">&#39;data_raw&#39;</span>)</span>
+<span id="cb2-6"><a href="introduction.html#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-7"><a href="introduction.html#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;data_raw/HIGGS.csv&#39;</span>)) {</span>
+<span id="cb2-8"><a href="introduction.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download.file</span>(</span>
+<span id="cb2-9"><a href="introduction.html#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;https://archive.ics.uci.edu/ml/machine-learning-databases/00280/HIGGS.csv.gz&#39;</span>,</span>
+<span id="cb2-10"><a href="introduction.html#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;data_raw/HIGGS.csv.gz&#39;</span>)</span>
+<span id="cb2-11"><a href="introduction.html#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gunzip</span>(<span class="st">&#39;data_raw/HIGGS.csv.gz&#39;</span>)</span>
+<span id="cb2-12"><a href="introduction.html#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="introduction.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load dataset into memory</span></span>
 <span id="cb3-2"><a href="introduction.html#cb3-2" aria-hidden="true" tabindex="-1"></a>higgs_all <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">&#39;data_raw/HIGGS.csv&#39;</span>)</span>
 <span id="cb3-3"><a href="introduction.html#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -245,7 +247,8 @@ The following code loads the dataset, downloading and unzipping the CSV file as 
 <span id="cb3-15"><a href="introduction.html#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate input and output columns</span></span>
 <span id="cb3-16"><a href="introduction.html#cb3-16" aria-hidden="true" tabindex="-1"></a>xAll <span class="ot">&lt;-</span> higgs_all <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>signal) <span class="sc">|&gt;</span> <span class="fu">as.data.table</span>()</span>
 <span id="cb3-17"><a href="introduction.html#cb3-17" aria-hidden="true" tabindex="-1"></a>yAll <span class="ot">&lt;-</span> higgs_all <span class="sc">|&gt;</span> <span class="fu">select</span>(signal) <span class="sc">|&gt;</span> <span class="fu">as.data.table</span>()</span>
-<span id="cb3-18"><a href="introduction.html#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(higgs_all)</span></code></pre></div>
+<span id="cb3-18"><a href="introduction.html#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="introduction.html#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(higgs_all)</span></code></pre></div>
 <p>The HIGGS dataset contains 28 features and one binary target, <code>signal</code>. The
 <code>signal</code> value of an observation corresponds to whether a particle collision produced a Higgs
 boson as an intermediate product. Two possible processes are considered with the same input
@@ -274,8 +277,10 @@ post-model evaluation.</p>
 <span id="cb4-7"><a href="introduction.html#cb4-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> yAll[<span class="sc">-</span>idx,]</span>
 <span id="cb4-8"><a href="introduction.html#cb4-8" aria-hidden="true" tabindex="-1"></a>xFinalTest <span class="ot">&lt;-</span> x[idx,]</span>
 <span id="cb4-9"><a href="introduction.html#cb4-9" aria-hidden="true" tabindex="-1"></a>yFinalTest <span class="ot">&lt;-</span> y[idx,]</span>
-<span id="cb4-10"><a href="introduction.html#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(xAll, yAll)</span>
-<span id="cb4-11"><a href="introduction.html#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
+<span id="cb4-10"><a href="introduction.html#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="introduction.html#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean-up</span></span>
+<span id="cb4-12"><a href="introduction.html#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(xAll, yAll)</span>
+<span id="cb4-13"><a href="introduction.html#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
 </div>
 <div id="optimization-metric" class="section level2 hasAnchor" number="1.3">
 <h2><span class="header-section-number">1.3</span> Optimization metric<a href="introduction.html#optimization-metric" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -284,7 +289,7 @@ optimizing the area under the receiver operating curve (AUC). The AUC
 is defined such that a perfect classifer has an AUC of 1 and a random classifier has an AUC of 0.5.
 An advantage of using the AUC is that it reflects the trade-off between the true and false positive
 rates of a model depending on the chosen classification threshold.
-We will use the <code>pROC</code> package to create and plot ROC curves, and to compute their area.</p>
+We will use the <code>pROC</code> package to create ROC curves and compute their area.</p>
 
 </div>
 </div>

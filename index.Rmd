@@ -50,7 +50,11 @@ if (packageVersion('base') < '4.1.0') {
   stop('This code requires R >= 4.1.0!')
 }
 
+# Package manager
 if(!require("pacman")) install.packages("pacman")
+
+# Keras - deep learning package.  You may need to restart R after installation
+# before proceeding with the rest of the code in this project.
 if(!require("keras")) {
   install.packages("keras")
   keras::install_keras()
@@ -59,6 +63,9 @@ if(!require("keras")) {
 library(pacman)
 p_load(data.table, dtplyr, tidyverse, R.utils, Rfast, knitr,
        keras, caret, pROC, knitr, conflicted)
+
+# The `conflicted` package will throw an error if a function name is ambiguous, unless
+# A preferred package is given below.
 conflict_prefer('summarize', 'dplyr')
 conflict_prefer('summarise', 'dplyr')
 conflict_prefer('filter', 'dplyr')

@@ -19,29 +19,24 @@ overfitting effectively [@Srivastava2014].
 ## Tuning the learning rate
 
 The following code plots the binary cross-entropy (a loss metric for binary classification networks)
-after each training epoch for three different learning rates, using the Adam[@Kingma2014] optimizer.
+after each training epoch for three different learning rates, using the Adam [@Kingma2014] optimizer.
 We will train networks with 3 hidden layers of 256 nodes each.
 
 ```{r Keras-history}
 
 train_keras_history <- function(x, y, depth, breadth,
                         dropout = 0.5, learning_rate=0.0002, epochs = 50) {
-  model <- keras_model_sequential()
-  model |>
-    layer_dense(breadth, 'relu', input_shape = ncol(x)) |>
-    layer_dropout(rate = dropout)
+  model <- keras_model_sequential(input_shape = ncol(x))
   
-  # subsequent hidden layers
-  if (depth > 1) {
-    for (layer in seq(2,depth)) {
-      model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
-    }
+  # Hidden layers
+  for (layer in seq(depth)) {
+    model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
   }
   
-  # output layer (logistic activation function for binary classification)
+  # Output layer (logistic activation function for binary classification)
   model |> layer_dense(1, 'sigmoid')
   
-  # compile model
+  # Compile model
   model |>
     keras::compile(
       loss = 'binary_crossentropy',
@@ -49,10 +44,11 @@ train_keras_history <- function(x, y, depth, breadth,
       metrics = metric_auc()
     )
   
-  # a larger batch size trains faster but uses more GPU memory
+  # A larger batch size trains faster but uses more GPU memory
   history <- model |>
     fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
+  # Clean-up
   rm(model)
   gc()
   k_clear_session()
@@ -64,6 +60,7 @@ train_keras_history <- function(x, y, depth, breadth,
 
 ```{r Keras-learning-rate-effect, results='hide'}
 
+# Train a 3x256 NN with three different learning rates
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results.RDdata')) {
   history1 <- train_keras_history(x, y, 3, 256, learning_rate = 1e-3)
@@ -77,13 +74,15 @@ tensorflow::set_random_seed(42, disable_gpu = F)
 
 ```{r Keras-learning-rate-plot, fig.height=3, fig.width=5}
 
+# Plot metric over the number of epochs
 tibble(
   epoch = seq(50),
   `1e-3` = history1$metrics$val_loss,
   `5e-4` = history2$metrics$val_loss,
-  `2e-4` = history3$metrics$val_loss) |>
+  `2e-4` = history3$metrics$val_loss
+) |>
   pivot_longer(-epoch,'lr',values_to = 'loss') |>
-  mutate(lr = as.numeric(lr)) |> 
+  mutate(lr = as.numeric(lr)) |>
   ggplot(aes(epoch,loss, color=as.factor(lr))) +
   geom_line() +
   xlab('Epochs') +
@@ -114,32 +113,23 @@ train_keras_auc <- function(x, y,
                         epochs = 50) {
   cat('DNN: ', depth, 'x', breadth, '\n')
   
-  model <- keras_model_sequential()
+  model <- keras_model_sequential(input_shape = ncol(x))
   
   # By default, Keras applies Glorot uniform initialization for weights
   # and zero initialization for biases. Glorot uniform initialization
   # samples weights from Uniform(-sqrt(6/n),sqrt(6/n)) where n is the
   # sum of in and out nodes between two input/hidden/output layers.
   
-  # first hidden layer
-  model |>
-    layer_dense(units = breadth, activation = 'relu', input_shape = ncol(x)) |>
-    layer_dropout(rate = dropout)
-  
-  # subsequent hidden layers
-  if (depth > 1) {
-    for (layer in seq(2,depth)) {
-      model |>
-        layer_dense(units = breadth, activation = 'relu') |>
-        layer_dropout(rate = dropout)
-    }
+  # Hidden layers
+  for (layer in seq(depth)) {
+    model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
   }
   
-  # output layer (logistic activation function for binary classification)
+  # Output layer (logistic activation function for binary classification)
   model |>
     layer_dense(units = 1, activation = 'sigmoid')
   
-  # compile model
+  # Compile model
   model |>
     keras::compile(
       loss = 'binary_crossentropy',
@@ -147,7 +137,7 @@ train_keras_auc <- function(x, y,
       metrics = metric_auc()
     )
   
-  # a larger batch size trains faster but uses more GPU memory
+  # A larger batch size trains faster but uses more GPU memory
   history <- model |>
     fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   ypred <- model |> predict(x, batch_size = 8192) |> as.vector()
@@ -186,7 +176,7 @@ tensorflow::set_random_seed(42, disable_gpu = F)
 
 ```{r Keras-tuning-plot, fig.height=3.5, fig.width=4.5}
 
-# heatmap of AUC vs depth and breadth
+# Heatmap of AUC vs depth and breadth
 nn_results |> ggplot(aes(as.factor(depth), as.factor(breadth), fill = auc)) +
   geom_tile() +
   geom_text(aes(label = round(auc,4)), color = "black", size = 3) +
@@ -206,11 +196,12 @@ power.
 
 Since the high-level features in the HIGGS dataset are derived from the other, low-level features,
 it is clear that a good model should be able to learn the data without use of these features.
-The following code trains a 3x2048 NN on the HIGGS dataset once using all features and once
+The following code trains a 3x2048 NN on the HIGGS using
 just the low-level features:
 
 ```{r Train-low-features-only}
 
+# Train 3x2048 NN using low-level features only.  Cache the AUC value.
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/nn_results3.RDdata')) {
   auc_low_only <- train_keras_auc(x[,1:21], y, 3, 2048, learning_rate = 2e-4)
@@ -220,7 +211,8 @@ load('cache/nn_results3.RDdata')
 tensorflow::set_random_seed(42, disable_gpu = F)
 ```
 
-The following code displays the AUC for the both models:
+The following code displays the AUC for the 3x2048 NN with and without the high-level features:
+
 ```{r AUC-all-vs-low}
 
 tibble(

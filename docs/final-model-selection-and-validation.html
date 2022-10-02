@@ -23,7 +23,7 @@
 <meta name="author" content="Yin-Chi Chan" />
 
 
-<meta name="date" content="2022-09-27" />
+<meta name="date" content="2022-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,7 +170,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html"><i class="fa fa-check"></i><b>2</b> Data analysis and transformation</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#low-level-momentum-features"><i class="fa fa-check"></i><b>2.1</b> Low-level momentum features</a></li>
+<li class="chapter" data-level="2.1" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#momentum-features"><i class="fa fa-check"></i><b>2.1</b> Momentum features</a></li>
 <li class="chapter" data-level="2.2" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#angular-features"><i class="fa fa-check"></i><b>2.2</b> Angular features</a></li>
 <li class="chapter" data-level="2.3" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#b-tag-features"><i class="fa fa-check"></i><b>2.3</b> <span class="math inline">\(b\)</span>-tag features</a></li>
 <li class="chapter" data-level="2.4" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
@@ -214,15 +214,15 @@ using all available input features.</p>
 <span id="cb25-3"><a href="final-model-selection-and-validation.html#cb25-3" aria-hidden="true" tabindex="-1"></a>                        filename) {</span>
 <span id="cb25-4"><a href="final-model-selection-and-validation.html#cb25-4" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">keras_model_sequential</span>(<span class="at">input_shape =</span> <span class="fu">ncol</span>(x))</span>
 <span id="cb25-5"><a href="final-model-selection-and-validation.html#cb25-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-6"><a href="final-model-selection-and-validation.html#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># hidden layers</span></span>
+<span id="cb25-6"><a href="final-model-selection-and-validation.html#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Hidden layers</span></span>
 <span id="cb25-7"><a href="final-model-selection-and-validation.html#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (layer <span class="cf">in</span> <span class="fu">seq</span>(depth)) {</span>
 <span id="cb25-8"><a href="final-model-selection-and-validation.html#cb25-8" aria-hidden="true" tabindex="-1"></a>    model <span class="sc">|&gt;</span> <span class="fu">layer_dense</span>(breadth, <span class="st">&#39;relu&#39;</span>) <span class="sc">|&gt;</span> <span class="fu">layer_dropout</span>(<span class="at">rate =</span> dropout)</span>
 <span id="cb25-9"><a href="final-model-selection-and-validation.html#cb25-9" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb25-10"><a href="final-model-selection-and-validation.html#cb25-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-11"><a href="final-model-selection-and-validation.html#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output layer (logistic activation function for binary classification)</span></span>
+<span id="cb25-11"><a href="final-model-selection-and-validation.html#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Output layer (logistic activation function for binary classification)</span></span>
 <span id="cb25-12"><a href="final-model-selection-and-validation.html#cb25-12" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span> <span class="fu">layer_dense</span>(<span class="dv">1</span>, <span class="st">&#39;sigmoid&#39;</span>)</span>
 <span id="cb25-13"><a href="final-model-selection-and-validation.html#cb25-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-14"><a href="final-model-selection-and-validation.html#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># compile model</span></span>
+<span id="cb25-14"><a href="final-model-selection-and-validation.html#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compile model</span></span>
 <span id="cb25-15"><a href="final-model-selection-and-validation.html#cb25-15" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">|&gt;</span></span>
 <span id="cb25-16"><a href="final-model-selection-and-validation.html#cb25-16" aria-hidden="true" tabindex="-1"></a>    keras<span class="sc">::</span><span class="fu">compile</span>(</span>
 <span id="cb25-17"><a href="final-model-selection-and-validation.html#cb25-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">loss =</span> <span class="st">&#39;binary_crossentropy&#39;</span>,</span>
@@ -230,27 +230,28 @@ using all available input features.</p>
 <span id="cb25-19"><a href="final-model-selection-and-validation.html#cb25-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">metrics =</span> <span class="fu">metric_auc</span>()</span>
 <span id="cb25-20"><a href="final-model-selection-and-validation.html#cb25-20" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb25-21"><a href="final-model-selection-and-validation.html#cb25-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-22"><a href="final-model-selection-and-validation.html#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># a larger batch size trains faster but uses more GPU memory</span></span>
+<span id="cb25-22"><a href="final-model-selection-and-validation.html#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># A larger batch size trains faster but uses more GPU memory</span></span>
 <span id="cb25-23"><a href="final-model-selection-and-validation.html#cb25-23" aria-hidden="true" tabindex="-1"></a>  history <span class="ot">&lt;-</span> model <span class="sc">|&gt;</span></span>
 <span id="cb25-24"><a href="final-model-selection-and-validation.html#cb25-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(x, y, <span class="at">epochs =</span> epochs, <span class="at">batch_size =</span> <span class="dv">8192</span>, <span class="at">validation_split =</span> <span class="fl">0.2</span>)</span>
 <span id="cb25-25"><a href="final-model-selection-and-validation.html#cb25-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb25-26"><a href="final-model-selection-and-validation.html#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># need to save model BEFORE clean-up below</span></span>
+<span id="cb25-26"><a href="final-model-selection-and-validation.html#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Need to save model BEFORE clean-up below</span></span>
 <span id="cb25-27"><a href="final-model-selection-and-validation.html#cb25-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save_model_hdf5</span>(model, filename, <span class="at">include_optimizer =</span> F)</span>
 <span id="cb25-28"><a href="final-model-selection-and-validation.html#cb25-28" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb25-29"><a href="final-model-selection-and-validation.html#cb25-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(model)</span>
 <span id="cb25-30"><a href="final-model-selection-and-validation.html#cb25-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gc</span>()</span>
 <span id="cb25-31"><a href="final-model-selection-and-validation.html#cb25-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">k_clear_session</span>()</span>
 <span id="cb25-32"><a href="final-model-selection-and-validation.html#cb25-32" aria-hidden="true" tabindex="-1"></a>  tensorflow<span class="sc">::</span>tf<span class="sc">$</span>compat<span class="sc">$</span>v1<span class="sc">$</span><span class="fu">reset_default_graph</span>()</span>
-<span id="cb25-33"><a href="final-model-selection-and-validation.html#cb25-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-33"><a href="final-model-selection-and-validation.html#cb25-33" aria-hidden="true" tabindex="-1"></a>} <span class="co"># end fn</span></span>
 <span id="cb25-34"><a href="final-model-selection-and-validation.html#cb25-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-35"><a href="final-model-selection-and-validation.html#cb25-35" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span>
-<span id="cb25-36"><a href="final-model-selection-and-validation.html#cb25-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;cache/final_nn.hdf5&#39;</span>)) {</span>
-<span id="cb25-37"><a href="final-model-selection-and-validation.html#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">train_keras_model</span>(</span>
-<span id="cb25-38"><a href="final-model-selection-and-validation.html#cb25-38" aria-hidden="true" tabindex="-1"></a>    x, y, <span class="dv">3</span>, <span class="dv">2048</span>, <span class="at">learning_rate =</span> <span class="fl">2e-4</span>, <span class="at">filename =</span> <span class="st">&#39;cache/final_nn.hdf5&#39;</span></span>
-<span id="cb25-39"><a href="final-model-selection-and-validation.html#cb25-39" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb25-40"><a href="final-model-selection-and-validation.html#cb25-40" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-41"><a href="final-model-selection-and-validation.html#cb25-41" aria-hidden="true" tabindex="-1"></a>finalModel <span class="ot">&lt;-</span> <span class="fu">load_model_hdf5</span>(<span class="st">&#39;cache/final_nn.hdf5&#39;</span>)</span>
-<span id="cb25-42"><a href="final-model-selection-and-validation.html#cb25-42" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span></code></pre></div>
+<span id="cb25-35"><a href="final-model-selection-and-validation.html#cb25-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the final model and save to file, or load from file if it exists</span></span>
+<span id="cb25-36"><a href="final-model-selection-and-validation.html#cb25-36" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span>
+<span id="cb25-37"><a href="final-model-selection-and-validation.html#cb25-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&#39;cache/final_nn.hdf5&#39;</span>)) {</span>
+<span id="cb25-38"><a href="final-model-selection-and-validation.html#cb25-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">train_keras_model</span>(</span>
+<span id="cb25-39"><a href="final-model-selection-and-validation.html#cb25-39" aria-hidden="true" tabindex="-1"></a>    x, y, <span class="dv">3</span>, <span class="dv">2048</span>, <span class="at">learning_rate =</span> <span class="fl">2e-4</span>, <span class="at">filename =</span> <span class="st">&#39;cache/final_nn.hdf5&#39;</span></span>
+<span id="cb25-40"><a href="final-model-selection-and-validation.html#cb25-40" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-41"><a href="final-model-selection-and-validation.html#cb25-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-42"><a href="final-model-selection-and-validation.html#cb25-42" aria-hidden="true" tabindex="-1"></a>finalModel <span class="ot">&lt;-</span> <span class="fu">load_model_hdf5</span>(<span class="st">&#39;cache/final_nn.hdf5&#39;</span>)</span>
+<span id="cb25-43"><a href="final-model-selection-and-validation.html#cb25-43" aria-hidden="true" tabindex="-1"></a>tensorflow<span class="sc">::</span><span class="fu">set_random_seed</span>(<span class="dv">42</span>, <span class="at">disable_gpu =</span> F)</span></code></pre></div>
 <p>The AUC of the ROC curve for the final test set is:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="final-model-selection-and-validation.html#cb26-1" aria-hidden="true" tabindex="-1"></a>yPred <span class="ot">&lt;-</span> finalModel<span class="sc">$</span><span class="fu">predict</span>(xFinalTest) <span class="sc">|&gt;</span> <span class="fu">drop</span>() <span class="co"># drop length-1 dimensions</span></span>
 <span id="cb26-2"><a href="final-model-selection-and-validation.html#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">auc</span>(<span class="fu">roc</span>(yFinalTest,yPred))</span></code></pre></div>

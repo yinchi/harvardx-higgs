@@ -23,7 +23,7 @@
 <meta name="author" content="Yin-Chi Chan" />
 
 
-<meta name="date" content="2022-09-27" />
+<meta name="date" content="2022-10-02" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -170,7 +170,7 @@ div.csl-indent {
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html"><i class="fa fa-check"></i><b>2</b> Data analysis and transformation</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#low-level-momentum-features"><i class="fa fa-check"></i><b>2.1</b> Low-level momentum features</a></li>
+<li class="chapter" data-level="2.1" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#momentum-features"><i class="fa fa-check"></i><b>2.1</b> Momentum features</a></li>
 <li class="chapter" data-level="2.2" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#angular-features"><i class="fa fa-check"></i><b>2.2</b> Angular features</a></li>
 <li class="chapter" data-level="2.3" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#b-tag-features"><i class="fa fa-check"></i><b>2.3</b> <span class="math inline">\(b\)</span>-tag features</a></li>
 <li class="chapter" data-level="2.4" data-path="data-analysis-and-transformation.html"><a href="data-analysis-and-transformation.html#high-level-features"><i class="fa fa-check"></i><b>2.4</b> High-level features</a></li>
@@ -209,10 +209,10 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 2</span> Data analysis and transformation<a href="data-analysis-and-transformation.html#data-analysis-and-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In this section, we analyze the various input features of the HIGGS dataset and apply
 deskewing and <span class="math inline">\(z\)</span>-score normalization.</p>
-<div id="low-level-momentum-features" class="section level2 hasAnchor" number="2.1">
-<h2><span class="header-section-number">2.1</span> Low-level momentum features<a href="data-analysis-and-transformation.html#low-level-momentum-features" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="momentum-features" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Momentum features<a href="data-analysis-and-transformation.html#momentum-features" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The input features containing <code>_pT</code> are related to transverse (perpendicular to the input beams)
-momentum, as is the high-level feature <code>missing_E_mag</code>. Histograms of these features
+momentum, as is <code>missing_E_mag</code>. Histograms of these features
 are plotted as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="data-analysis-and-transformation.html#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
 <span id="cb5-2"><a href="data-analysis-and-transformation.html#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="fu">contains</span>(<span class="st">&#39;_pT&#39;</span>), <span class="st">&#39;missing_E_mag&#39;</span>)) <span class="sc">|&gt;</span></span>
@@ -298,7 +298,7 @@ are plotted as follows:</p>
 <div id="angular-features" class="section level2 hasAnchor" number="2.2">
 <h2><span class="header-section-number">2.2</span> Angular features<a href="data-analysis-and-transformation.html#angular-features" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The features containing <code>_eta</code> or <code>_phi</code> describe angular data of the detected products
-of the simulated collision processes. Histograms for these features are as follows:</p>
+of the simulated collision processes, in radians. Histograms for these features are as follows:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="data-analysis-and-transformation.html#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
 <span id="cb8-2"><a href="data-analysis-and-transformation.html#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="fu">contains</span>(<span class="st">&#39;_eta&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_phi&#39;</span>))) <span class="sc">|&gt;</span></span>
 <span id="cb8-3"><a href="data-analysis-and-transformation.html#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
@@ -387,6 +387,7 @@ with the low-level momentum features, are quite skewed:</p>
 <span id="cb11-7"><a href="data-analysis-and-transformation.html#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>key, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">nrow =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
 <span id="cb11-8"><a href="data-analysis-and-transformation.html#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&#39;High-level features&#39;</span>)</span></code></pre></div>
 <p><img src="higgs_files/figure-html/Hist-high-level-features-1.png" width="1008" /></p>
+<p>Therefore, we will apply a log transformation to this data:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data-analysis-and-transformation.html#cb12-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">|&gt;</span></span>
 <span id="cb12-2"><a href="data-analysis-and-transformation.html#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">&#39;m_&#39;</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb12-3"><a href="data-analysis-and-transformation.html#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
@@ -469,29 +470,31 @@ are as follows:</p>
 <p>The following code applies log transformation to selected columns of the HIGGS
 training and test datasets. We will also convert our
 data types into matrices here for input into subsequent stages of our analysis:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="data-analysis-and-transformation.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply log transform</span></span>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="data-analysis-and-transformation.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply log transforms</span></span>
 <span id="cb14-2"><a href="data-analysis-and-transformation.html#cb14-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> x <span class="sc">|&gt;</span></span>
-<span id="cb14-3"><a href="data-analysis-and-transformation.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
-<span id="cb14-4"><a href="data-analysis-and-transformation.html#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">contains</span>(<span class="st">&#39;m_&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_pT&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_mag&#39;</span>)),</span>
-<span id="cb14-5"><a href="data-analysis-and-transformation.html#cb14-5" aria-hidden="true" tabindex="-1"></a>    log)) <span class="sc">|&gt;</span></span>
-<span id="cb14-6"><a href="data-analysis-and-transformation.html#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>()</span>
-<span id="cb14-7"><a href="data-analysis-and-transformation.html#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="data-analysis-and-transformation.html#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to matrices</span></span>
-<span id="cb14-9"><a href="data-analysis-and-transformation.html#cb14-9" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> x <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb14-3"><a href="data-analysis-and-transformation.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-4"><a href="data-analysis-and-transformation.html#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb14-5"><a href="data-analysis-and-transformation.html#cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="fu">contains</span>(<span class="st">&#39;m_&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_pT&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_mag&#39;</span>)),</span>
+<span id="cb14-6"><a href="data-analysis-and-transformation.html#cb14-6" aria-hidden="true" tabindex="-1"></a>      log</span>
+<span id="cb14-7"><a href="data-analysis-and-transformation.html#cb14-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-8"><a href="data-analysis-and-transformation.html#cb14-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-9"><a href="data-analysis-and-transformation.html#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>()</span>
 <span id="cb14-10"><a href="data-analysis-and-transformation.html#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="data-analysis-and-transformation.html#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply log transform</span></span>
-<span id="cb14-12"><a href="data-analysis-and-transformation.html#cb14-12" aria-hidden="true" tabindex="-1"></a>xFinalTest <span class="ot">&lt;-</span> xFinalTest <span class="sc">|&gt;</span></span>
-<span id="cb14-13"><a href="data-analysis-and-transformation.html#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
-<span id="cb14-14"><a href="data-analysis-and-transformation.html#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">contains</span>(<span class="st">&#39;m_&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_pT&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_mag&#39;</span>)),</span>
-<span id="cb14-15"><a href="data-analysis-and-transformation.html#cb14-15" aria-hidden="true" tabindex="-1"></a>    log)) <span class="sc">|&gt;</span></span>
-<span id="cb14-16"><a href="data-analysis-and-transformation.html#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>()</span>
-<span id="cb14-17"><a href="data-analysis-and-transformation.html#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-18"><a href="data-analysis-and-transformation.html#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to matrices</span></span>
-<span id="cb14-19"><a href="data-analysis-and-transformation.html#cb14-19" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> x <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb14-20"><a href="data-analysis-and-transformation.html#cb14-20" aria-hidden="true" tabindex="-1"></a>xFinalTest <span class="ot">&lt;-</span> xFinalTest <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb14-21"><a href="data-analysis-and-transformation.html#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="data-analysis-and-transformation.html#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
-<p>The following code then scales the training data to have zero mean and unit
+<span id="cb14-11"><a href="data-analysis-and-transformation.html#cb14-11" aria-hidden="true" tabindex="-1"></a>xFinalTest <span class="ot">&lt;-</span> xFinalTest <span class="sc">|&gt;</span></span>
+<span id="cb14-12"><a href="data-analysis-and-transformation.html#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-13"><a href="data-analysis-and-transformation.html#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb14-14"><a href="data-analysis-and-transformation.html#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="fu">contains</span>(<span class="st">&#39;m_&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_pT&#39;</span>), <span class="fu">contains</span>(<span class="st">&#39;_mag&#39;</span>)),</span>
+<span id="cb14-15"><a href="data-analysis-and-transformation.html#cb14-15" aria-hidden="true" tabindex="-1"></a>      log</span>
+<span id="cb14-16"><a href="data-analysis-and-transformation.html#cb14-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-17"><a href="data-analysis-and-transformation.html#cb14-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-18"><a href="data-analysis-and-transformation.html#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>()</span>
+<span id="cb14-19"><a href="data-analysis-and-transformation.html#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="data-analysis-and-transformation.html#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to matrices</span></span>
+<span id="cb14-21"><a href="data-analysis-and-transformation.html#cb14-21" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> x <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb14-22"><a href="data-analysis-and-transformation.html#cb14-22" aria-hidden="true" tabindex="-1"></a>xFinalTest <span class="ot">&lt;-</span> xFinalTest <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb14-23"><a href="data-analysis-and-transformation.html#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="data-analysis-and-transformation.html#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
+<p>The following code then scales the training and final validation data to have zero mean and unit
 standard deviation:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data-analysis-and-transformation.html#cb15-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(x)</span>
 <span id="cb15-2"><a href="data-analysis-and-transformation.html#cb15-2" aria-hidden="true" tabindex="-1"></a>sd <span class="ot">&lt;-</span> <span class="fu">colVars</span>(x, <span class="at">std =</span> T) <span class="co"># std=T -&gt; compute st. dev. instead of variance</span></span>

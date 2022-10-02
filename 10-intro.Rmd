@@ -17,6 +17,8 @@ The following code loads the dataset, downloading and unzipping the CSV file as 
 ```{r Download-data, results='hide'}
 
 options(timeout=1800) # Give more time for the download to complete
+
+# Download and unzip the data file if needed
 if(!dir.exists('data_raw')) {
   dir.create('data_raw')
 }
@@ -27,6 +29,7 @@ if(!file.exists('data_raw/HIGGS.csv')) {
   gunzip('data_raw/HIGGS.csv.gz')
 }
 ```
+
 ```{r Load-Data}
 
 # Load dataset into memory
@@ -46,6 +49,7 @@ colnames(higgs_all) <- c('signal',
 # Separate input and output columns
 xAll <- higgs_all |> select(-signal) |> as.data.table()
 yAll <- higgs_all |> select(signal) |> as.data.table()
+
 rm(higgs_all)
 ```
 
@@ -81,6 +85,8 @@ x <- xAll[-idx,]
 y <- yAll[-idx,]
 xFinalTest <- x[idx,]
 yFinalTest <- y[idx,]
+
+# Clean-up
 rm(xAll, yAll)
 gc()
 ```
@@ -92,4 +98,4 @@ optimizing the area under the receiver operating curve (AUC).  The AUC
 is defined such that a perfect classifer has an AUC of 1 and a random classifier has an AUC of 0.5.
 An advantage of using the AUC is that it reflects the trade-off between the true and false positive
 rates of a model depending on the chosen classification threshold.
-We will use the `pROC` package to create and plot ROC curves, and to compute their area.
+We will use the `pROC` package to create ROC curves and compute their area.

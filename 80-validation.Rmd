@@ -10,15 +10,15 @@ train_keras_model <- function(x, y, depth, breadth,
                         filename) {
   model <- keras_model_sequential(input_shape = ncol(x))
   
-  # hidden layers
+  # Hidden layers
   for (layer in seq(depth)) {
     model |> layer_dense(breadth, 'relu') |> layer_dropout(rate = dropout)
   }
   
-  # output layer (logistic activation function for binary classification)
+  # Output layer (logistic activation function for binary classification)
   model |> layer_dense(1, 'sigmoid')
   
-  # compile model
+  # Compile model
   model |>
     keras::compile(
       loss = 'binary_crossentropy',
@@ -26,19 +26,20 @@ train_keras_model <- function(x, y, depth, breadth,
       metrics = metric_auc()
     )
   
-  # a larger batch size trains faster but uses more GPU memory
+  # A larger batch size trains faster but uses more GPU memory
   history <- model |>
     fit(x, y, epochs = epochs, batch_size = 8192, validation_split = 0.2)
   
-  # need to save model BEFORE clean-up below
+  # Need to save model BEFORE clean-up below
   save_model_hdf5(model, filename, include_optimizer = F)
   
   rm(model)
   gc()
   k_clear_session()
   tensorflow::tf$compat$v1$reset_default_graph()
-}
+} # end fn
 
+# Train the final model and save to file, or load from file if it exists
 tensorflow::set_random_seed(42, disable_gpu = F)
 if (!file.exists('cache/final_nn.hdf5')) {
   train_keras_model(
